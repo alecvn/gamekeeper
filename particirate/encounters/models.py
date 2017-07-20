@@ -16,9 +16,12 @@ class Encounter(models.Model):
 
 
 class Rule(models.Model):
-    encounter = models.ForeignKey()
+    encounter = models.ForeignKey(Participant)
 
 
 class Point(models.Model):
     pass
 
+
+class Influence(models.Model):
+    pass
