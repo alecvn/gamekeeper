@@ -9,11 +9,11 @@ module.exports = {
     //the entry point we created earlier. Note that './' means 
     //your current directory. You don't have to specify the extension  now,
     //because you will specify extensions later in the `resolve` section
-    entry: './particirate/assets/js/index', 
+    entry: './src/gamekeeper_ui/assets/js/index',
     
     output: {
         //where you want your compiled bundle to be stored
-        path: path.resolve('./particirate/assets/bundles/'), 
+        path: path.resolve('./src/gamekeeper_ui/assets/bundles/'), 
         //naming convention webpack should use for your files
         filename: '[name]-[hash].js', 
     },

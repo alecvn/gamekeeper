@@ -1,0 +1,20 @@
+<h1>Matches</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'create_game' %}" method="post">
+  {% csrf_token %}
+  <div>
+    {{ game_form }}
+    
+  </div>
+  <input type="submit" value="Submit" />
+  
+</form>
+
+<div>
+  {% for game in games %}
+      <div>{{ game.name }}</div>
+  {% endfor %}
+</div>
+
