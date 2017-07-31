@@ -8,19 +8,19 @@ from models import Event, Game, Player, Rule, Point, Match
 def list_games(request):
     game_form = GameForm()
     games = Game.objects.all()
-    
+
     return render(request, "gamekeeper/index.html", {'game_form': game_form, 'games': games})
 
 def new_game(request):
     game_form = GameForm()
-    
+
     return render(request, "gamekeeper/index.html", {'game_form': game_form})
 
 def create_game(request):
     game_form = GameForm(request.POST)
     if game_form.is_valid():
         game_form.save()
-        return HttpResponseRedirect(reverse('index'))
+        return HttpResponseRedirect(reverse('list_games'))
     return render(request, 'gamekeeper/index.html', {
         'error_message': game_form.errors
     })
@@ -48,20 +48,20 @@ def create_participant(request):
 def list_rules(request):
     rule_form = RuleForm()
     rules = Rule.objects.all()
-    
-    return render(request, "gamekeeper/index.html", {'rule_form': rule_form, 'rules': rules})
+
+    return render(request, "gamekeeper/rules_index.html", {'rule_form': rule_form, 'rules': rules})
 
 def new_rule(request):
     rule_form = RuleForm()
     
-    return render(request, "gamekeeper/index.html", {'rule_form': rule_form})
+    return render(request, "gamekeeper/rules_index.html", {'rule_form': rule_form})
 
 def create_rule(request):
     rule_form = RuleForm(request.POST)
     if rule_form.is_valid():
         rule_form.save()
-        return HttpResponseRedirect(reverse('index'))
-    return render(request, 'gamekeeper/index.html', {
+        return HttpResponseRedirect(reverse('list_rules'))
+    return render(request, 'gamekeeper/rules_index.html', {
         'error_message': rule_form.errors
     })
 

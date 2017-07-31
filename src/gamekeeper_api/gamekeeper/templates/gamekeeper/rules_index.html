@@ -1,0 +1,21 @@
+<h1>Rules</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'create_rule' %}" method="post">
+  {% csrf_token %}
+  <div>
+    {{ rule_form }}
+    
+  </div>
+  <input type="submit" value="Submit" />
+  
+</form>
+
+<div>
+  {% for rule in rules %}
+  <div>{{ rule.description }}</div>
+  <div>{{ rule.beneficiary.full_name }}</div>
+  <div>{{ rule.point }}</div>
+  {% endfor %}
+</div>

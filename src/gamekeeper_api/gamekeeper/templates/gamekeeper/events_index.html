@@ -1,21 +1,20 @@
-<h1>Games</h1>
+<h1>Events</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'create_game' %}" method="post">
+<form action="{% url 'create_event' %}" method="post">
   {% csrf_token %}
   <div>
-    {{ game_form }}
-    
+    {{ event_form }}
   </div>
   <input type="submit" value="Submit" />
   
 </form>
 
 <div>
-  {% for game in games %}
+  {% for event in events %}
   <div>
-    <a href="{% url 'list_events' %}">{{ game.name }}</a>
+    <a href="{% url 'list_events' %}">{{ event.name }}</a>
   </div>
   {% endfor %}
 </div>
