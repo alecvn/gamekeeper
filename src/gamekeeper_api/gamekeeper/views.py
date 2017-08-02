@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm, MatchForm
-from models import Event, Game, Player, Rule, Point, Match
+from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm#, MatchForm
+from models import Event, Game, Player, Rule, Point#, Match
 
 def list_games(request):
     game_form = GameForm()
@@ -65,25 +65,25 @@ def create_rule(request):
         'error_message': rule_form.errors
     })
 
-def list_matches(request):
-    encounter_form = MatchForm()
-    gamekeeper = Match.objects.all()
+# def list_matches(request):
+#     encounter_form = MatchForm()
+#     gamekeeper = Match.objects.all()
     
-    return render(request, "gamekeeper/index.html", {'encounter_form': encounter_form, 'gamekeeper': gamekeeper})
+#     return render(request, "gamekeeper/index.html", {'encounter_form': encounter_form, 'gamekeeper': gamekeeper})
 
-def new_match(request):
-    encounter_form = MatchForm()
+# def new_match(request):
+#     encounter_form = MatchForm()
     
-    return render(request, "gamekeeper/index.html", {'encounter_form': encounter_form})
+#     return render(request, "gamekeeper/index.html", {'encounter_form': encounter_form})
 
-def create_match(request):
-    encounter_form = MatchForm(request.POST)
-    if encounter_form.is_valid():
-        encounter_form.save()
-        return HttpResponseRedirect(reverse('index'))
-    return render(request, 'gamekeeper/index.html', {
-        'error_message': encounter_form.errors
-    })
+# def create_match(request):
+#     encounter_form = MatchForm(request.POST)
+#     if encounter_form.is_valid():
+#         encounter_form.save()
+#         return HttpResponseRedirect(reverse('index'))
+#     return render(request, 'gamekeeper/index.html', {
+#         'error_message': encounter_form.errors
+#     })
 
 def list_events(request):
     event_form = EventForm()

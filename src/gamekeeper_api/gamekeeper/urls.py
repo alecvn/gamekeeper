@@ -9,8 +9,8 @@ urlpatterns = [
     url(r'^rules/create/$', views.create_rule, name='create_rule'),
     url(r'^players/index/$', views.list_players, name='list_players'),
     url(r'^players/create/$', views.create_player, name='create_player'),
-    url(r'^matches/index/$', views.list_matches, name='list_matches'),
-    url(r'^matches/create/$', views.create_match, name='create_match'),
+    # url(r'^matches/index/$', views.list_matches, name='list_matches'),
+    # url(r'^matches/create/$', views.create_match, name='create_match'),
     url(r'^events/index/$', views.list_events, name='list_events'),
     url(r'^events/create/$', views.create_event, name='create_events'),
 ]
