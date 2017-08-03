@@ -97,9 +97,9 @@ def new_event(request):
     return render(request, "gamekeeper/index.html", {'event_form': event_form})
 
 def show_event(request, game_id, event_id):
-    event = Event.objects.get(event_id)
+    event = Event.objects.get(pk=event_id)
     
-    return render(request, "gamekeeper/show_event.html", {'event': event, 'game_id': game_id})
+    return render(request, "gamekeeper/event_show.html", {'event': event, 'game_id': game_id})
 
 def create_event(request, game_id):
     event_form = EventForm(request.POST)
