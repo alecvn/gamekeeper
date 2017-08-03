@@ -86,8 +86,8 @@ def create_rule(request):
 #     })
 
 def list_events(request, game_id):
-    event_form = EventForm(game_id=game_id)
-    parent_events = Event.objects.filter(parent_id__isnull=True, game_id=game_id)
+    event_form = EventForm()
+    parent_events = Event.objects.all()
     
     return render(request, "gamekeeper/events_index.html", {'event_form': event_form, 'parent_events': parent_events, 'game_id': game_id})
 
@@ -102,11 +102,12 @@ def show_event(request, game_id, event_id):
     return render(request, "gamekeeper/show_event.html", {'event': event, 'game_id': game_id})
 
 def create_event(request, game_id):
-    event_form = EventForm(request.POST, game_id=game_id)
+    event_form = EventForm(request.POST)
     if event_form.is_valid():
-        event_form.cleaned_data['game_id'] = game_id
-        event_form.save()
-        return HttpResponseRedirect(reverse('events_index', game_id))
+        event = event_form.save(commit=False)
+        event.game_id = game_id
+        event.save()
+        return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
     return render(request, 'gamekeeper/events_index.html', {
         'error_message': event_form.errors,
         'game_id': game_id

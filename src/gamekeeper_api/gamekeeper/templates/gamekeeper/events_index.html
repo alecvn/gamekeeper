@@ -13,6 +13,9 @@
 
 <div>
   {% for parent_event in parent_events %}
+    <div>
+      <a href="{% url 'show_event' game_id parent_event.id %}">{{ parent_event.name }}</a>
+    </div>
     {% for event in parent_events.child_events %}
       <div>
 	<a href="{% url 'show_event' game_id event.id %}">{{ event.name }}</a>

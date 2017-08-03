@@ -29,9 +29,9 @@ class EventForm(forms.ModelForm):
     end_datetime = forms.DateField(required = True, widget=forms.SelectDateWidget())
     #game = forms.ModelChoiceField(queryset=Game.objects.all(), required = False, widget=forms.HiddenInput())
 
-    def __init__(self, *args, **kwargs):
-        game_id = kwargs.pop('game_id','')
-        super(EventForm, self).__init__(*args, **kwargs)
+#    def __init__(self, *args, **kwargs):
+#        self.game_id = kwargs.pop('game_id','')
+#        super(EventForm, self).__init__(*args, **kwargs)
 
         #self.fields['game']=forms.ModelChoiceField(queryset=Game.objects.filter(id=game_id), widget=forms.HiddenInput())
         #self.fields['game'].value = game_id
@@ -39,7 +39,6 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ["name", "description", "parent", "start_datetime", "end_datetime", "rules", "players"]
-
 # class MatchForm(forms.ModelForm):
 #     class Meta:
 #         model = Match
