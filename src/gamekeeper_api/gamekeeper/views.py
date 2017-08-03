@@ -85,24 +85,31 @@ def create_rule(request):
 #         'error_message': encounter_form.errors
 #     })
 
-def list_events(request):
-    event_form = EventForm()
-    events = Event.objects.all()
+def list_events(request, game_id):
+    event_form = EventForm(game_id=game_id)
+    parent_events = Event.objects.filter(parent_id__isnull=True, game_id=game_id)
     
-    return render(request, "gamekeeper/index.html", {'event_form': event_form, 'events': events})
+    return render(request, "gamekeeper/events_index.html", {'event_form': event_form, 'parent_events': parent_events, 'game_id': game_id})
 
 def new_event(request):
     event_form = EventForm()
     
     return render(request, "gamekeeper/index.html", {'event_form': event_form})
 
-def create_event(request):
-    event_form = EventForm(request.POST)
+def show_event(request, game_id, event_id):
+    event = Event.objects.get(event_id)
+    
+    return render(request, "gamekeeper/show_event.html", {'event': event, 'game_id': game_id})
+
+def create_event(request, game_id):
+    event_form = EventForm(request.POST, game_id=game_id)
     if event_form.is_valid():
+        event_form.cleaned_data['game_id'] = game_id
         event_form.save()
-        return HttpResponseRedirect(reverse('index'))
-    return render(request, 'gamekeeper/index.html', {
-        'error_message': event_form.errors
+        return HttpResponseRedirect(reverse('events_index', game_id))
+    return render(request, 'gamekeeper/events_index.html', {
+        'error_message': event_form.errors,
+        'game_id': game_id
     })
 
 def list_players(request):

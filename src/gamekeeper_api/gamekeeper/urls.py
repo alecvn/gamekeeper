@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^players/create/$', views.create_player, name='create_player'),
     # url(r'^matches/index/$', views.list_matches, name='list_matches'),
     # url(r'^matches/create/$', views.create_match, name='create_match'),
-    url(r'^events/index/$', views.list_events, name='list_events'),
-    url(r'^events/create/$', views.create_event, name='create_events'),
+    url(r'^games/(?P<game_id>[0-9]+)/events/index/$', views.list_events, name='list_events'),
+    url(r'^games/(?P<game_id>[0-9]+)/events/create/$', views.create_event, name='create_event'),
+    url(r'^games/(?P<game_id>[0-9]+)/events/(?P<event_id>[0-9]+)/show/$', views.show_event, name='show_events'),
 ]

@@ -15,7 +15,7 @@
 <div>
   {% for game in games %}
   <div>
-    <a href="{% url 'list_events' %}">{{ game.name }}</a>
+    <a href="{% url 'list_events' game.id %}">{{ game.name }}</a>
   </div>
   {% endfor %}
 </div>

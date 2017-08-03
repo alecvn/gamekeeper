@@ -34,7 +34,7 @@ class Event(models.Model):
     name = models.CharField(max_length=128)
     description = models.CharField(max_length=128, null=True)
     game = models.ForeignKey(Game)
-    parent = models.ForeignKey("self", null=True)
+    parent = models.ForeignKey("self", null=True, related_name="child_events")
     players = models.ManyToManyField(Player)
     rules = models.ManyToManyField(Rule)
     start_datetime = models.DateTimeField()
