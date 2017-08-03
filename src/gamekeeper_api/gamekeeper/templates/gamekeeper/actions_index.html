@@ -1,0 +1,19 @@
+<h1>Actions</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'create_action' %}" method="post">
+    {% csrf_token %}
+    <div>
+        {{ action_form }}
+        
+    </div>
+    <input type="submit" value="Submit" />
+    
+</form>
+
+<div>
+    {% for action in actions %}
+        <div>{{ action.description }}</div>
+    {% endfor %}
+</div>

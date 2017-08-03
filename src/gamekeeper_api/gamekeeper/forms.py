@@ -4,29 +4,39 @@ from models import Event, Game, Player, Rule, Point, Action
 class PointForm(forms.ModelForm):
     class Meta:
         model = Point
-        fields = ["allocation"]
+        fields = ["description", "allocation"]
 
 class PlayerForm(forms.ModelForm):
     class Meta:
         model = Player
-        fields = ["full_name"]
+        fields = ["full_name", "points", "actions"]
+
+class ActionForm(forms.ModelForm):
+    class Meta:
+        model = Action
+        fields = ["parent", "description", "point"]
 
 class RuleForm(forms.ModelForm):
     class Meta:
         model = Rule
-        fields = ["description", "point"]
+        fields = ["parent", "triggered_action", "triggering_action", "description", "point"]
 
 class GameForm(forms.ModelForm):
     class Meta:
         model = Game
-        fields = ["name", "rules"]
+        fields = ["name", "actions"]
 
 class EventForm(forms.ModelForm):
     parent = forms.ModelChoiceField(queryset=Event.objects.all(), required=False)
-    rules = forms.ModelChoiceField(queryset=Rule.objects.all(), required=False)
-    players = forms.ModelChoiceField(queryset=Player.objects.all(), required=False)
+    actions = forms.ModelMultipleChoiceField(queryset=Action.objects.all(), required=False)
+    players = forms.ModelMultipleChoiceField(queryset=Player.objects.all(), required=False)
     start_datetime = forms.DateField(required = True, widget=forms.SelectDateWidget())
     end_datetime = forms.DateField(required = True, widget=forms.SelectDateWidget())
+
+    class Meta:
+        model = Event
+        fields = ["name", "description", "parent", "start_datetime", "end_datetime", "actions", "players"]
+
     #game = forms.ModelChoiceField(queryset=Game.objects.all(), required = False, widget=forms.HiddenInput())
 
 #    def __init__(self, *args, **kwargs):
@@ -36,9 +46,7 @@ class EventForm(forms.ModelForm):
         #self.fields['game']=forms.ModelChoiceField(queryset=Game.objects.filter(id=game_id), widget=forms.HiddenInput())
         #self.fields['game'].value = game_id
        
-    class Meta:
-        model = Event
-        fields = ["name", "description", "parent", "start_datetime", "end_datetime", "rules", "players"]
+    
 # class MatchForm(forms.ModelForm):
 #     class Meta:
 #         model = Match

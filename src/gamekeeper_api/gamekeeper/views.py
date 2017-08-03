@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponseRedirect, reverse
-from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm#, MatchForm
-from models import Event, Game, Player, Rule, Point#, Match
+from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm, ActionForm
+from models import Event, Game, Player, Rule, Point, Action
 
 def list_games(request):
     game_form = GameForm()
@@ -87,8 +87,8 @@ def create_rule(request):
 
 def list_events(request, game_id):
     event_form = EventForm()
-    parent_events = Event.objects.all()
-    
+    parent_events = Event.objects.filter(parent_id__isnull=True)
+
     return render(request, "gamekeeper/events_index.html", {'event_form': event_form, 'parent_events': parent_events, 'game_id': game_id})
 
 def new_event(request):
@@ -103,10 +103,12 @@ def show_event(request, game_id, event_id):
 
 def create_event(request, game_id):
     event_form = EventForm(request.POST)
+
     if event_form.is_valid():
         event = event_form.save(commit=False)
         event.game_id = game_id
         event.save()
+        event_form.save_m2m()
         return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
     return render(request, 'gamekeeper/events_index.html', {
         'error_message': event_form.errors,
@@ -131,4 +133,44 @@ def create_player(request):
         return HttpResponseRedirect(reverse('list_players'))
     return render(request, 'gamekeeper/players_index.html', {
         'error_message': player_form.errors
+    })
+
+def list_actions(request):
+    action_form = ActionForm()
+    actions = Action.objects.all()
+    
+    return render(request, "gamekeeper/actions_index.html", {'action_form': action_form, 'actions': actions})
+
+def new_action(request):
+    action_form = ActionForm()
+    
+    return render(request, "gamekeeper/actions_index.html", {'action_form': action_form})
+
+def create_action(request):
+    action_form = ActionForm(request.POST)
+    if action_form.is_valid():
+        action_form.save()
+        return HttpResponseRedirect(reverse('list_actions'))
+    return render(request, 'gamekeeper/actions_index.html', {
+        'error_message': action_form.errors
+    })
+
+def list_points(request):
+    point_form = PointForm()
+    points = Point.objects.all()
+    
+    return render(request, "gamekeeper/points_index.html", {'point_form': point_form, 'points': points})
+
+def new_point(request):
+    point_form = PointForm()
+    
+    return render(request, "gamekeeper/points_index.html", {'point_form': point_form})
+
+def create_point(request):
+    point_form = PointForm(request.POST)
+    if point_form.is_valid():
+        point_form.save()
+        return HttpResponseRedirect(reverse('list_points'))
+    return render(request, 'gamekeeper/points_index.html', {
+        'error_message': point_form.errors
     })
