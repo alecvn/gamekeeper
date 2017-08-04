@@ -13,7 +13,14 @@
 </form>
 
 <div>
-    {% for action in actions %}
-        <div>{{ action.description }}</div>
+    {% for parent_action in parent_actions %}
+        <ul>
+            <div>{{ parent_action.description }}</div>
+            {% for action in parent_action.children %}
+                <li>
+                    <div>{{ action.description }}</div>
+                </li>
+            {% endfor %}
+        </ul>
     {% endfor %}
 </div>

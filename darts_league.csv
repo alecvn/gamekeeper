@@ -1,0 +1,40 @@
+lowest score: 50
+highest score: 300
+do you get points for bowling someone out for the lowest score or for making the lowest score
+
+day 1
+---
+tshepo,2,glen,1,
+tshepo,1,adrian,2,
+andrew,2,alec,0,
+
+day 2
+---
+alec,2,glen,1,double-trip-20 alec
+andrew,1,tshepo,2,
+keith,2,tshepo,1,4-in-a-row tshepo
+adrian,2,andrew,1,double-trip-20 adrian
+keith,2,andrew,1,
+zaheer,2,keith,0,
+
+day 3
+---
+alec,3,adrian,0,
+andrew,3,glen,0,double-trip-20 andrew
+keith,2,adrian,1,
+zaheer,1,alec,2,
+zaheer,3,adrian,0,
+
+day 4
+---
+tshepo,3,zaheer,0,1-to-4 tshepo
+zaheer,2,andrew,1,
+
+day 5
+---
+glen,3,adrian,0,double-trip-20 adrian
+keith,2,alec,1,
+tshepo,2,alec,0,
+
+week2
+keith,2,andrew,1,1-to-4 keith, 1-to-4 keith

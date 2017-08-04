@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm, ActionForm
-from models import Event, Game, Player, Rule, Point, Action
+from models import Event, Game, Player, Rule, Point, Action, Outcome
 
 def list_games(request):
     game_form = GameForm()
@@ -98,8 +98,8 @@ def new_event(request):
 
 def show_event(request, game_id, event_id):
     event = Event.objects.get(pk=event_id)
-    
-    return render(request, "gamekeeper/event_show.html", {'event': event, 'game_id': game_id})
+
+    return render(request, "gamekeeper/event_show.html", {'event': event, 'game_id': game_id, 'event_id': event.id})
 
 def create_event(request, game_id):
     event_form = EventForm(request.POST)
@@ -114,6 +114,17 @@ def create_event(request, game_id):
         'error_message': event_form.errors,
         'game_id': game_id
     })
+
+def update_event(request, game_id, event_id):
+    params = request.POST['outcome']
+    
+    action_id, player_id = params.split(",")
+    action = Action.objects.get(pk=action_id)
+    player = Player.objects.get(pk=player_id)
+    event = Event.objects.get(pk=event_id)
+    outcome = Outcome.objects.create(event=event, action=action, player=player)
+
+    return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
 
 def list_players(request):
     player_form = PlayerForm()
@@ -137,9 +148,9 @@ def create_player(request):
 
 def list_actions(request):
     action_form = ActionForm()
-    actions = Action.objects.all()
+    parent_actions = Action.objects.filter(parent_id__isnull=True)
     
-    return render(request, "gamekeeper/actions_index.html", {'action_form': action_form, 'actions': actions})
+    return render(request, "gamekeeper/actions_index.html", {'action_form': action_form, 'parent_actions': parent_actions})
 
 def new_action(request):
     action_form = ActionForm()
@@ -174,3 +185,8 @@ def create_point(request):
     return render(request, 'gamekeeper/points_index.html', {
         'error_message': point_form.errors
     })
+
+def list_outcomes(request):
+    players = Player.objects.all()
+    
+    return render(request, "gamekeeper/outcomes_index.html", {'players': players})

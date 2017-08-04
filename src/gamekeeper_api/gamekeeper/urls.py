@@ -13,9 +13,11 @@ urlpatterns = [
     url(r'^actions/create/$', views.create_action, name='create_action'),
     url(r'^points/index/$', views.list_points, name='list_points'),
     url(r'^points/create/$', views.create_point, name='create_point'),
+    url(r'^outcomes/index/$', views.list_outcomes, name='list_outcomes'),
     # url(r'^matches/index/$', views.list_matches, name='list_matches'),
     # url(r'^matches/create/$', views.create_match, name='create_match'),
     url(r'^games/(?P<game_id>[0-9]+)/events/index/$', views.list_events, name='list_events'),
     url(r'^games/(?P<game_id>[0-9]+)/events/create/$', views.create_event, name='create_event'),
+    url(r'^games/(?P<game_id>[0-9]+)/events/(?P<event_id>[0-9]+)/update/$', views.update_event, name='update_event'),
     url(r'^games/(?P<game_id>[0-9]+)/events/(?P<event_id>[0-9]+)/show/$', views.show_event, name='show_event'),
 ]

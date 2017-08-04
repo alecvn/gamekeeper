@@ -12,12 +12,16 @@ class Point(models.Model):
         return u'{0} - {1}'.format(self.description, self.allocation)
 
 class Action(models.Model):
-    parent = models.ForeignKey("self", null=True, blank=True)
+    parent = models.ForeignKey("self", null=True, blank=True, related_name="child_actions")
     description = models.CharField(max_length=128)
     point = models.ForeignKey(Point, null=True, blank=True)
 
     def __unicode__(self):
         return self.description
+
+    @property
+    def children(self):
+        return self.child_actions.all()
 
 class Player(models.Model):
     full_name = models.CharField(max_length=128)
@@ -26,6 +30,11 @@ class Player(models.Model):
 
     def __unicode__(self):
         return self.full_name
+
+    @property
+    def total(self):
+        points = list(map(lambda x: x.action.point.allocation if x.action.point else 0, self.outcomes.all()))
+        return sum(points)
     
 class Rule(models.Model):
     # rules look at a state at any given time and deduce when and where it is triggered
@@ -72,6 +81,11 @@ class Event(models.Model):
     @property
     def action_list(self):
         return self.actions.all()
+
+class Outcome(models.Model):
+    event = models.ForeignKey(Event)
+    actions = models.ManyToManyField(Action)
+    player = models.ForeignKey(Player, related_name="outcomes")
 
 # class Match(models.Model):
 #     event = models.ForeignKey(Event)

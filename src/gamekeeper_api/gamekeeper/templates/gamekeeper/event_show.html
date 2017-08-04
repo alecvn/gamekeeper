@@ -4,12 +4,12 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'update_event' game_id %}" method="post">
+<form action="{% url 'update_event' game_id event_id %}" method="post">
     {% csrf_token %}
     <ul>
         {% for player in event.players_list %}
             <li>
-                {{ player }} {% for action in event.action_list %}<input type="submit" value="{{ action }}" />{% endfor %}
+                {{ player }} {% for action in event.action_list %}<button type="submit" name="outcome" value="{{ action.id }},{{ player.id }}">{{ action }}</button>{% endfor %}
             </li>
         {% endfor %}
     </ul>
