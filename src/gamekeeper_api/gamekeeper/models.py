@@ -20,20 +20,52 @@ class Action(models.Model):
         return self.description
 
     @property
+    def results_list(self):
+        return self.results.all()
+
+    @property
     def children(self):
         return self.child_actions.all()
 
+    def evaluate_children(self, event, player):
+        children_with_results = []
+        results = Result.objects.filter(event_id=event.id, player_id=player.id, action_id=self.id)
+        if len(results) == 0:
+            import pdb;pdb.set_trace()
+            for child in self.children:
+                child_results = Result.objects.filter(event_id=event.id, player_id=player.id, action_id=child.id)
+                if len(child_results) > 0:
+                    children_with_results.append(child_results[0])
+
+            if len(children_with_results) == len(self.children):
+                result = Result.objects.create(event=event, player=player, action=self)
+            else:
+                for child in self.children:
+                    child.evaluate_children(event, player)
+
+        # if reduce(lambda arr, child: len(Result.objects.filter(event_id=event.id, player_id=player.id, action_id=child.id)) == 1, self.children, []):
+        #     result = Result.objects.create(event=event, player=player, action=self)
+        
+
+    # @staticmethod
+    # def evaluate_all(event_id, player_id):
+    #     # pass event_id through here
+    #     actions = Action.objects.filter(parent_id__isnull=True)
+    #     for action in actions:
+    #         action.evaluate_children()
+
+
 class Player(models.Model):
     full_name = models.CharField(max_length=128)
-    points = models.ManyToManyField(Point)
-    actions = models.ManyToManyField(Action)
+    points = models.ManyToManyField(Point, blank=True)
+    actions = models.ManyToManyField(Action, blank=True)
 
     def __unicode__(self):
         return self.full_name
 
     @property
     def total(self):
-        points = list(map(lambda x: x.action.point.allocation if x.action.point else 0, self.outcomes.all()))
+        points = list(map(lambda x: x.action.point.allocation if x.action.point else 0, self.results.all()))
         return sum(points)
     
 class Rule(models.Model):
@@ -82,10 +114,10 @@ class Event(models.Model):
     def action_list(self):
         return self.actions.all()
 
-class Outcome(models.Model):
-    event = models.ForeignKey(Event)
-    actions = models.ManyToManyField(Action)
-    player = models.ForeignKey(Player, related_name="outcomes")
+class Result(models.Model):
+    event = models.ForeignKey(Event, related_name="results")
+    action = models.ForeignKey(Action, related_name="results")
+    player = models.ForeignKey(Player, related_name="results")
 
 # class Match(models.Model):
 #     event = models.ForeignKey(Event)

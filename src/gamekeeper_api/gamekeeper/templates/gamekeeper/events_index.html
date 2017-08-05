@@ -1,4 +1,9 @@
+{% extends 'gamekeeper/base.html' %}
+
+
+{% block content %}
 <h1>Events</h1>
+
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
@@ -14,12 +19,16 @@
 <div>
   {% for parent_event in parent_events %}
     <ul>
-      <a href="{% url 'show_event' game_id parent_event.id %}">{{ parent_event.name }}</a>
+	<a href="{% url 'show_event' game_id parent_event.id %}">{{ parent_event.name }}</a> - <a href="{% url 'list_results' game_id parent_event.id %}">Standings</a>
       {% for event in parent_event.children %}
           <li>
-	      <a href="{% url 'show_event' game_id event.id %}">{{ event.name }}</a>
+	    <a href="{% url 'show_event' game_id event.id %}">{{ event.name }}</a>
+	    {% for child_event in event.children %}
+	        <li><a href="{% url 'show_event' game_id child_event.id %}">{{ child_event.name }}</a></li>
+	    {% endfor %}
           </li>
       {% endfor %}
     </ul>
   {% endfor %}
 </div>
+{% endblock %}

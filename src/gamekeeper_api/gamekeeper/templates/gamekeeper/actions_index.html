@@ -1,3 +1,7 @@
+{% extends 'gamekeeper/base.html' %}
+
+
+{% block content %}
 <h1>Actions</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -24,3 +28,4 @@
         </ul>
     {% endfor %}
 </div>
+{% endblock %}

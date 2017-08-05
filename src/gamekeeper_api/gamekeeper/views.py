@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm, ActionForm
-from models import Event, Game, Player, Rule, Point, Action, Outcome
+from models import Event, Game, Player, Rule, Point, Action, Result
 
 def list_games(request):
     game_form = GameForm()
@@ -116,13 +116,13 @@ def create_event(request, game_id):
     })
 
 def update_event(request, game_id, event_id):
-    params = request.POST['outcome']
+    params = request.POST['result']
     
     action_id, player_id = params.split(",")
     action = Action.objects.get(pk=action_id)
     player = Player.objects.get(pk=player_id)
     event = Event.objects.get(pk=event_id)
-    outcome = Outcome.objects.create(event=event, action=action, player=player)
+    result = Result.objects.create(event=event, player=player, action=action)
 
     return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
 
@@ -152,10 +152,22 @@ def list_actions(request):
     
     return render(request, "gamekeeper/actions_index.html", {'action_form': action_form, 'parent_actions': parent_actions})
 
-def new_action(request):
-    action_form = ActionForm()
-    
-    return render(request, "gamekeeper/actions_index.html", {'action_form': action_form})
+def evaluate_actions(request, game_id, event_id):
+    # eventually filter by event and player here
+    event = Event.objects.get(pk=event_id)
+    actions = event.actions.filter(parent_id__isnull=True)
+    # TODO: fix this hack
+    if len(actions) == 0:
+        event = event.children[0]
+        actions = event.actions.all()
+
+    players = event.players.all()
+        
+    for player in players:
+        for action in actions:
+            action.evaluate_children(event, player)
+
+    return HttpResponseRedirect(reverse('list_results', kwargs={'game_id': game_id, 'event_id': event_id}))
 
 def create_action(request):
     action_form = ActionForm(request.POST)
@@ -186,7 +198,8 @@ def create_point(request):
         'error_message': point_form.errors
     })
 
-def list_outcomes(request):
-    players = Player.objects.all()
-    
-    return render(request, "gamekeeper/outcomes_index.html", {'players': players})
+def list_results(request, game_id, event_id):
+    event = Event.objects.get(pk=event_id)
+    players = event.players.all()
+
+    return render(request, "gamekeeper/results_index.html", {'players': players, 'game_id': game_id, 'event_id': event_id})
