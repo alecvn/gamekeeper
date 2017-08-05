@@ -46,19 +46,6 @@ class Action(models.Model):
                             child.evaluate_children(child_event, player)
 
 
-class Player(models.Model):
-    full_name = models.CharField(max_length=128)
-    points = models.ManyToManyField(Point, blank=True)
-    actions = models.ManyToManyField(Action, blank=True)
-
-    def __unicode__(self):
-        return self.full_name
-
-    @property
-    def total(self):
-        points = list(map(lambda x: x.action.point.allocation if x.action.point else 0, self.results.all()))
-        return sum(points)
-    
 class Rule(models.Model):
     # rules look at a state at any given time and deduce when and where it is triggered
     # allow to look at log of events or actions as they happen
@@ -74,6 +61,20 @@ class Rule(models.Model):
     def trigger_list(self):
         return Trigger.objects.filter(rule_id=self.id)
 
+class Player(models.Model):
+    full_name = models.CharField(max_length=128)
+    points = models.ManyToManyField(Point, blank=True)
+    actions = models.ManyToManyField(Action, blank=True)
+    rules = models.ManyToManyField(Rule, blank=True)
+
+    def __unicode__(self):
+        return self.full_name
+
+    @property
+    def total(self):
+        points = list(map(lambda x: x.point.allocation if x.point else 0, self.rules.all()))
+        return sum(points)
+    
 class Trigger(models.Model):
     rule = models.ForeignKey(Rule)
     action = models.ForeignKey(Action)

@@ -170,26 +170,31 @@ def list_actions(request):
 def evaluate_actions(request, game_id, event_id):
     # eventually filter by event and player here
     parent_event = Event.objects.get(pk=event_id)
+
     for event in parent_event.children:
         rules = event.rules.all()
         if len(rules) > 0:
             for rule in rules:
                 player_event_actions = []
                 for child_event in event.children:
-                    for player in child_event.players:
-                        player_event_actions.append(PlayerEventAction.objects.filter(event=child_event, player=player))
-                if rule.trigger_list == 
-    actions = event.actions.filter(parent_id__isnull=True)
-    # TODO: fix this hack
-    if len(actions) == 0:
-        event = event.children[0]
-        actions = event.actions.all()
+                    for player in child_event.players.all():
+                        peas = PlayerEventAction.objects.filter(event=child_event, player=player)
+                        for pea in peas:
+                            player_event_actions.append(pea)
 
-    players = event.players.all()
+                if list(rule.triggers.all()) == map(lambda x: x.action, player_event_actions):
+                    player_event_actions[0].player.rules.add(rule)
+    # actions = event.actions.filter(parent_id__isnull=True)
+    # # TODO: fix this hack
+    # if len(actions) == 0:
+    #     event = event.children[0]
+    #     actions = event.actions.all()
 
-    for player in players:
-        for action in actions:
-            action.evaluate_children(event, player)
+    # players = event.players.all()
+
+    # for player in players:
+    #     for action in actions:
+    #         action.evaluate_children(event, player)
 
     return HttpResponseRedirect(reverse('list_results', kwargs={'game_id': game_id, 'event_id': event_id}))
 
