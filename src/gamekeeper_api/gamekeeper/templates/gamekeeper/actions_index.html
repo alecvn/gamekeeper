@@ -24,6 +24,16 @@
                 <li>
                     <div>{{ action.description }}</div>
                 </li>
+		{% for child_action in action.children %}
+		<li>
+                    <div>{{ child_action.description }}</div>
+                </li>
+		{% for baby_action in child_action.children %}
+		<li>
+                    <div>{{ baby_action.description }}</div>
+                </li>
+		{% endfor %}
+		{% endfor %}
             {% endfor %}
         </ul>
     {% endfor %}

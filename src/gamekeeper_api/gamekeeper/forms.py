@@ -19,7 +19,7 @@ class ActionForm(forms.ModelForm):
 class RuleForm(forms.ModelForm):
     class Meta:
         model = Rule
-        fields = ["parent", "triggered_action", "triggering_action", "description", "point"]
+        fields = ["parent", "description", "point"]
 
 class GameForm(forms.ModelForm):
     class Meta:
@@ -35,7 +35,7 @@ class EventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ["name", "description", "parent", "start_datetime", "end_datetime", "actions", "players"]
+        fields = ["name", "description", "parent", "start_datetime", "end_datetime", "actions", "players", "rules"]
 
     #game = forms.ModelChoiceField(queryset=Game.objects.all(), required = False, widget=forms.HiddenInput())
 

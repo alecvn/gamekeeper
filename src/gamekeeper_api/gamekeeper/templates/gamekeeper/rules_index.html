@@ -1,3 +1,6 @@
+{% extends 'gamekeeper/base.html' %}
+
+{% block content %}
 <h1>Rules</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -14,8 +17,7 @@
 
 <div>
   {% for rule in rules %}
-  <div>{{ rule.description }}</div>
-  <div>{{ rule.beneficiary.full_name }}</div>
-  <div>{{ rule.point }}</div>
+    <a href="{% url 'show_rule' rule.id %}">{{ rule.description }}</a>
   {% endfor %}
 </div>
+{% endblock %}

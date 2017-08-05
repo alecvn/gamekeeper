@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm, ActionForm
-from models import Event, Game, Player, Rule, Point, Action, Result
+from models import Event, Game, Player, Rule, Point, Action, PlayerEventAction, Trigger
 
 def list_games(request):
     game_form = GameForm()
@@ -56,6 +56,20 @@ def new_rule(request):
     
     return render(request, "gamekeeper/rules_index.html", {'rule_form': rule_form})
 
+def show_rule(request, rule_id):
+    rule = Rule.objects.get(pk=rule_id)
+    actions = Action.objects.all()
+    return render(request, "gamekeeper/rule_show.html", {'rule': rule, 'actions': actions, 'rule_id': rule.id})
+
+def update_rule(request, rule_id):
+    trigger_id = request.POST['trigger']
+    rule = Rule.objects.get(pk=rule_id)
+    action = Action.objects.get(pk=trigger_id)
+
+    trigger = Trigger.objects.create(rule=rule, action=action)
+
+    return HttpResponseRedirect(reverse('show_rule', kwargs={'rule_id': rule_id}))
+
 def create_rule(request):
     rule_form = RuleForm(request.POST)
     if rule_form.is_valid():
@@ -98,8 +112,9 @@ def new_event(request):
 
 def show_event(request, game_id, event_id):
     event = Event.objects.get(pk=event_id)
-
-    return render(request, "gamekeeper/event_show.html", {'event': event, 'game_id': game_id, 'event_id': event.id})
+    results = PlayerEventAction.objects.filter(event_id=event.id)
+    rules = event.rules.all()
+    return render(request, "gamekeeper/event_show.html", {'event': event, 'rules': rules, 'results': results, 'game_id': game_id, 'event_id': event.id})
 
 def create_event(request, game_id):
     event_form = EventForm(request.POST)
@@ -122,7 +137,7 @@ def update_event(request, game_id, event_id):
     action = Action.objects.get(pk=action_id)
     player = Player.objects.get(pk=player_id)
     event = Event.objects.get(pk=event_id)
-    result = Result.objects.create(event=event, player=player, action=action)
+    result = PlayerEventAction.objects.create(event=event, player=player, action=action)
 
     return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
 
@@ -154,7 +169,16 @@ def list_actions(request):
 
 def evaluate_actions(request, game_id, event_id):
     # eventually filter by event and player here
-    event = Event.objects.get(pk=event_id)
+    parent_event = Event.objects.get(pk=event_id)
+    for event in parent_event.children:
+        rules = event.rules.all()
+        if len(rules) > 0:
+            for rule in rules:
+                player_event_actions = []
+                for child_event in event.children:
+                    for player in child_event.players:
+                        player_event_actions.append(PlayerEventAction.objects.filter(event=child_event, player=player))
+                if rule.trigger_list == 
     actions = event.actions.filter(parent_id__isnull=True)
     # TODO: fix this hack
     if len(actions) == 0:
@@ -162,7 +186,7 @@ def evaluate_actions(request, game_id, event_id):
         actions = event.actions.all()
 
     players = event.players.all()
-        
+
     for player in players:
         for action in actions:
             action.evaluate_children(event, player)
@@ -173,6 +197,7 @@ def create_action(request):
     action_form = ActionForm(request.POST)
     if action_form.is_valid():
         action_form.save()
+        # action, created = Action.objects.get_or_create(**action_form.cleaned_data)
         return HttpResponseRedirect(reverse('list_actions'))
     return render(request, 'gamekeeper/actions_index.html', {
         'error_message': action_form.errors

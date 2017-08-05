@@ -29,30 +29,21 @@ class Action(models.Model):
 
     def evaluate_children(self, event, player):
         children_with_results = []
-        results = Result.objects.filter(event_id=event.id, player_id=player.id, action_id=self.id)
+        results = PlayerEventAction.objects.filter(event_id=event.id, player_id=player.id, action_id=self.id)
         if len(results) == 0:
-            import pdb;pdb.set_trace()
-            for child in self.children:
-                child_results = Result.objects.filter(event_id=event.id, player_id=player.id, action_id=child.id)
-                if len(child_results) > 0:
-                    children_with_results.append(child_results[0])
+            for child_action in self.children:
+                for child_event in event.children:
+                    child_results = PlayerEventAction.objects.filter(event_id=child_event.id, player_id=player.id, action_id=child_action.id)
+                    if len(child_results) > 0:
+                        children_with_results.append(child_results[0])
 
-            if len(children_with_results) == len(self.children):
-                result = Result.objects.create(event=event, player=player, action=self)
-            else:
-                for child in self.children:
-                    child.evaluate_children(event, player)
-
-        # if reduce(lambda arr, child: len(Result.objects.filter(event_id=event.id, player_id=player.id, action_id=child.id)) == 1, self.children, []):
-        #     result = Result.objects.create(event=event, player=player, action=self)
-        
-
-    # @staticmethod
-    # def evaluate_all(event_id, player_id):
-    #     # pass event_id through here
-    #     actions = Action.objects.filter(parent_id__isnull=True)
-    #     for action in actions:
-    #         action.evaluate_children()
+            if len(self.children) > 0:
+                if len(children_with_results) == len(self.children):
+                    result = PlayerEventAction.objects.create(event=event, player=player, action=self)
+                else:
+                    for child in self.children:
+                        for child_event in event.children:
+                            child.evaluate_children(child_event, player)
 
 
 class Player(models.Model):
@@ -71,14 +62,24 @@ class Player(models.Model):
 class Rule(models.Model):
     # rules look at a state at any given time and deduce when and where it is triggered
     # allow to look at log of events or actions as they happen
-    parent = models.ForeignKey("self", null=True)
+    parent = models.ForeignKey("self", null=True, blank=True)
     description = models.CharField(max_length=128, default="N/A")
-    triggering_action = models.ForeignKey(Action, null=True, related_name="triggered_rules")
-    triggered_action = models.ForeignKey(Action, null=True, related_name="triggering_rules")
     point = models.ForeignKey(Point, null=True)
+    triggers = models.ManyToManyField(Action, through="Trigger")
 
     def __unicode__(self):
         return self.description
+
+    @property
+    def trigger_list(self):
+        return Trigger.objects.filter(rule_id=self.id)
+
+class Trigger(models.Model):
+    rule = models.ForeignKey(Rule)
+    action = models.ForeignKey(Action)
+
+    def __unicode__(self):
+        return "{0}".format(self.action.description)
 
 class Game(models.Model):
     name = models.CharField(max_length=128)
@@ -95,6 +96,7 @@ class Event(models.Model):
     game = models.ForeignKey(Game)
     parent = models.ForeignKey("self", null=True, blank=True, related_name="child_events")
     players = models.ManyToManyField(Player)
+    rules = models.ManyToManyField(Rule, blank=True)
     actions = models.ManyToManyField(Action)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
@@ -114,22 +116,13 @@ class Event(models.Model):
     def action_list(self):
         return self.actions.all()
 
-class Result(models.Model):
-    event = models.ForeignKey(Event, related_name="results")
-    action = models.ForeignKey(Action, related_name="results")
-    player = models.ForeignKey(Player, related_name="results")
+class PlayerEventAction(models.Model):
+    event = models.ForeignKey(Event, related_name="player_event_actions")
+    action = models.ForeignKey(Action, related_name="player_event_actions")
+    player = models.ForeignKey(Player, related_name="player_event_actions")
 
-# class Match(models.Model):
-#     event = models.ForeignKey(Event)
-#     players = models.ManyToManyField(Player)
-#     rules = models.ManyToManyField(Rule)
-#     start_datetime = models.DateTimeField()
-#     end_datetime = models.DateTimeField()
+    def __unicode__(self):
+        return u'{0} - {1} - {2}'.format(self.player.full_name, self.event.name, self.action.description)
 
-# class Game(models.Model):
-#     match = models.ForeignKey(Match)
-#     players = models.ManyToManyField(Player)
-#     rules = models.ManyToManyField(Rule)
-#     datetime = models.DateTimeField()
-#     start_datetime = models.DateTimeField()
-#     end_datetime = models.DateTimeField()
+# class Result(models.Model):
+#     pass
