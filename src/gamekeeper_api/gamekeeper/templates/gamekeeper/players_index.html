@@ -18,7 +18,9 @@
 
 <div>
   {% for player in players %}
-      <div>{{ player.full_name }}</div>
+    <div>{{ player.full_name }}</div>
+    <div>{{ player.rules_triggered }}</div>
+    <!-- <div>{{ player.actions_triggered }}</div> -->
   {% endfor %}
 </div>
 {% endblock %}

@@ -3,18 +3,13 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponseRedirect, reverse
 from forms import EventForm, GameForm, PlayerForm, RuleForm, PointForm, ActionForm
-from models import Event, Game, Player, Rule, Point, Action, PlayerEventAction, Trigger
+from models import Event, Game, Player, Rule, RuleResult, Point, Action, ActionResult, Trigger
 
 def list_games(request):
     game_form = GameForm()
     games = Game.objects.all()
 
     return render(request, "gamekeeper/index.html", {'game_form': game_form, 'games': games})
-
-def new_game(request):
-    game_form = GameForm()
-
-    return render(request, "gamekeeper/index.html", {'game_form': game_form})
 
 def create_game(request):
     game_form = GameForm(request.POST)
@@ -31,11 +26,6 @@ def list_participants(request):
     
     return render(request, "gamekeeper/index.html", {'participant_form': participant_form, 'participants': participants})
 
-def new_participant(request):
-    participant_form = PlayerForm()
-    
-    return render(request, "gamekeeper/index.html", {'participant_form': participant_form})
-
 def create_participant(request):
     participant_form = PlayerForm(request.POST)
     if participant_form.is_valid():
@@ -50,11 +40,6 @@ def list_rules(request):
     rules = Rule.objects.all()
 
     return render(request, "gamekeeper/rules_index.html", {'rule_form': rule_form, 'rules': rules})
-
-def new_rule(request):
-    rule_form = RuleForm()
-    
-    return render(request, "gamekeeper/rules_index.html", {'rule_form': rule_form})
 
 def show_rule(request, rule_id):
     rule = Rule.objects.get(pk=rule_id)
@@ -79,40 +64,15 @@ def create_rule(request):
         'error_message': rule_form.errors
     })
 
-# def list_matches(request):
-#     encounter_form = MatchForm()
-#     gamekeeper = Match.objects.all()
-    
-#     return render(request, "gamekeeper/index.html", {'encounter_form': encounter_form, 'gamekeeper': gamekeeper})
-
-# def new_match(request):
-#     encounter_form = MatchForm()
-    
-#     return render(request, "gamekeeper/index.html", {'encounter_form': encounter_form})
-
-# def create_match(request):
-#     encounter_form = MatchForm(request.POST)
-#     if encounter_form.is_valid():
-#         encounter_form.save()
-#         return HttpResponseRedirect(reverse('index'))
-#     return render(request, 'gamekeeper/index.html', {
-#         'error_message': encounter_form.errors
-#     })
-
 def list_events(request, game_id):
     event_form = EventForm()
     parent_events = Event.objects.filter(parent_id__isnull=True)
 
     return render(request, "gamekeeper/events_index.html", {'event_form': event_form, 'parent_events': parent_events, 'game_id': game_id})
 
-def new_event(request):
-    event_form = EventForm()
-    
-    return render(request, "gamekeeper/index.html", {'event_form': event_form})
-
 def show_event(request, game_id, event_id):
     event = Event.objects.get(pk=event_id)
-    results = PlayerEventAction.objects.filter(event_id=event.id)
+    results = ActionResult.objects.filter(event_id=event.id)
     rules = event.rules.all()
     return render(request, "gamekeeper/event_show.html", {'event': event, 'rules': rules, 'results': results, 'game_id': game_id, 'event_id': event.id})
 
@@ -131,26 +91,27 @@ def create_event(request, game_id):
     })
 
 def update_event(request, game_id, event_id):
-    params = request.POST['result']
-    
-    action_id, player_id = params.split(",")
+    result_params = request.POST['result']
+
+    action_id, player_id = result_params.split(",")
     action = Action.objects.get(pk=action_id)
     player = Player.objects.get(pk=player_id)
-    event = Event.objects.get(pk=event_id)
-    result = PlayerEventAction.objects.create(event=event, player=player, action=action)
 
-    return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
+    description = request.POST['description%s' % player_id]
+
+    event = Event.objects.get(pk=event_id)
+    if description:
+        ActionResult.objects.create(event=event, player=player, action=action, description=description)
+    else:
+        ActionResult.objects.create(event=event, player=player, action=action)
+
+    return HttpResponseRedirect(reverse('show_event', kwargs={'game_id': game_id, 'event_id': event_id}))
 
 def list_players(request):
     player_form = PlayerForm()
     players = Player.objects.all()
     
     return render(request, "gamekeeper/players_index.html", {'player_form': player_form, 'players': players})
-
-def new_player(request):
-    player_form = PlayerForm()
-    
-    return render(request, "gamekeeper/players_index.html", {'player_form': player_form})
 
 def create_player(request):
     player_form = PlayerForm(request.POST)
@@ -175,15 +136,15 @@ def evaluate_actions(request, game_id, event_id):
         rules = event.rules.all()
         if len(rules) > 0:
             for rule in rules:
-                player_event_actions = []
+                action_results = []
                 for child_event in event.children:
                     for player in child_event.players.all():
-                        peas = PlayerEventAction.objects.filter(event=child_event, player=player)
+                        peas = ActionResult.objects.filter(event=child_event, player=player)
                         for pea in peas:
-                            player_event_actions.append(pea)
+                            action_results.append(pea)
 
-                if list(rule.triggers.all()) == map(lambda x: x.action, player_event_actions):
-                    player_event_actions[0].player.rules.add(rule)
+                if list(rule.triggers.all()) == map(lambda x: x.action, action_results):
+                    action_results[0].player.rules.add(rule)
     # actions = event.actions.filter(parent_id__isnull=True)
     # # TODO: fix this hack
     # if len(actions) == 0:
@@ -214,11 +175,6 @@ def list_points(request):
     
     return render(request, "gamekeeper/points_index.html", {'point_form': point_form, 'points': points})
 
-def new_point(request):
-    point_form = PointForm()
-    
-    return render(request, "gamekeeper/points_index.html", {'point_form': point_form})
-
 def create_point(request):
     point_form = PointForm(request.POST)
     if point_form.is_valid():
@@ -231,5 +187,6 @@ def create_point(request):
 def list_results(request, game_id, event_id):
     event = Event.objects.get(pk=event_id)
     players = event.players.all()
+    points = map(lambda player: player.total_points(event), players)
 
-    return render(request, "gamekeeper/results_index.html", {'players': players, 'game_id': game_id, 'event_id': event_id})
+    return render(request, "gamekeeper/results_index.html", {'players': players, 'points': points, 'game_id': game_id, 'event_id': event_id})

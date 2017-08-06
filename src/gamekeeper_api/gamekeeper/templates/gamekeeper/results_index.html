@@ -9,13 +9,18 @@
     {% csrf_token %}
     <table>
 	<tr>
+	    <th></th>
 	    {% for player in players %}<th>{{ player.full_name }}</th>{% endfor %}
 	</tr>
 	<tr>
-	    {% for player in players %}<td>{{ player.total }}</td>{% endfor %}
+	    <td>
+		Points
+	    </td>
+	    {% for point in points %}<td>{{ point }}</td>{% endfor %}
 	</tr>
     </table>
 
     <input type="submit" value="Evaluate">
 </form>
+
 {% endblock %}
