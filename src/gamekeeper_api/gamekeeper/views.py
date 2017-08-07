@@ -77,18 +77,29 @@ def show_event(request, game_id, event_id):
     return render(request, "gamekeeper/event_show.html", {'event': event, 'rules': rules, 'results': results, 'game_id': game_id, 'event_id': event.id})
 
 def create_event(request, game_id):
-    event_form = EventForm(request.POST)
+    event_to_clone_id = request.POST['event_to_clone_id']
+    if not event_to_clone_id:
+        event_form = EventForm(request.POST)
 
-    if event_form.is_valid():
-        event = event_form.save(commit=False)
-        event.game_id = game_id
-        event.save()
-        event_form.save_m2m()
+        if event_form.is_valid():
+            event = event_form.save(commit=False)
+            event.game_id = game_id
+            event.save()
+            event_form.save_m2m()
+            return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
+        return render(request, 'gamekeeper/events_index.html', {
+            'error_message': event_form.errors,
+            'game_id': game_id
+        })
+    else:
+        event_to_clone = Event.objects.get(pk=event_to_clone_id)
+        new_event = Event.objects.create(name=request.POST['name'], parent=event_to_clone.parent, game=event_to_clone.game, start_datetime=event_to_clone.start_datetime, end_datetime=event_to_clone.end_datetime)
+        for rule in event_to_clone.rules.all():
+            new_event.rules.add(rule)
+        for child_event in event_to_clone.child_events.all():
+            new_event.child_events.add(Event.objects.create(name=child_event.name, game=event_to_clone.game, start_datetime=event_to_clone.start_datetime, end_datetime=event_to_clone.end_datetime))
         return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
-    return render(request, 'gamekeeper/events_index.html', {
-        'error_message': event_form.errors,
-        'game_id': game_id
-    })
+        
 
 def update_event(request, game_id, event_id):
     result_params = request.POST['result']

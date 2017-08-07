@@ -10,6 +10,7 @@
 
 <form action="{% url 'update_event' game_id event_id %}" method="post">
     {% csrf_token %}
+    
     <ul>
 	{% for player in event.players_list %}
 	<li>

@@ -8,11 +8,12 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="{% url 'create_event' game_id %}" method="post">
-  {% csrf_token %}
-  <div>
-    {{ event_form }}
-  </div>
-  <input type="submit" value="Submit" />
+    {% csrf_token %}
+    <input name="event_to_clone_id"/>
+    <div>
+        {{ event_form }}
+    </div>
+    <input type="submit" value="Submit" />
   
 </form>
 
@@ -22,9 +23,9 @@
 	<a href="{% url 'show_event' game_id parent_event.id %}">{{ parent_event.name }}</a> - <a href="{% url 'list_results' game_id parent_event.id %}">Standings</a>
       {% for event in parent_event.children %}
           <li>
-	    <a href="{% url 'show_event' game_id event.id %}">{{ event.name }}</a>
-	    {% for child_event in event.children %}
-	        <li><a href="{% url 'show_event' game_id child_event.id %}">{{ child_event.name }}</a></li>
+	      <a href="{% url 'show_event' game_id event.id %}">{{ event.name }}</a>
+	      {% for child_event in event.children %}
+	          <li><a href="{% url 'show_event' game_id child_event.id %}">{{ child_event.name }}</a></li>
 	    {% endfor %}
           </li>
       {% endfor %}
