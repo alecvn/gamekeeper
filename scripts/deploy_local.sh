@@ -34,7 +34,7 @@ if [ $? != 0 ]; then
 fi
 cd -
 
-cd ${SITE_PATH}/gamekeeper
+cd ${SITE_PATH}/gamekeeper_api
 if [ ! -f "local_settings.py" ]; then
     echo "creating default local_settings.py"
     touch local_settings.py

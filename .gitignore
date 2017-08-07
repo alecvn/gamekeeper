@@ -3,5 +3,5 @@
 venv/
 node_modules/
 local_settings.py
-static_colected
+static_collected
 logs
