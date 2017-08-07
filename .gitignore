@@ -5,3 +5,4 @@ node_modules/
 local_settings.py
 static_collected
 logs
+src/gamekeeper_ui/assets/bundles

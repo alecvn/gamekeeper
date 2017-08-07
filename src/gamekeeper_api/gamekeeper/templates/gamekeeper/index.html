@@ -1,9 +1,10 @@
-{% extends 'gamekeeper/base.html' %}
+{% load render_bundle from webpack_loader %}
 
 
-{% block content %}
 <h1>Games</h1>
-
+<div id="container">
+    {% render_bundle 'main' %}
+</div>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="{% url 'create_game' %}" method="post">
@@ -23,4 +24,3 @@
   </div>
   {% endfor %}
 </div>
-{% endblock %}

@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'rest_framework',
-    #'webpack_loader',
+    'rest_framework',
+    'webpack_loader',
     'gamekeeper'
 ]
 
@@ -127,14 +127,14 @@ STATIC_ROOT = os.path.join(PROJECT_HOME, '..', '..', 'static_collected')
 
 STATICFILES_DIRS = (
     #This lets Django's collectstatic store our bundles
-    os.path.join(BASE_DIR, 'assets'), 
+    os.path.join(BASE_DIR, '../gamekeeper_ui/assets'), 
 )
 
 
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, '../../../webpack-stats.json'),
+        'STATS_FILE': os.path.join(BASE_DIR, '../../webpack-stats.json'),
     }
 }
 

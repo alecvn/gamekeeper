@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/epicsceptic/particirate#readme",
   "dependencies": {
-    "react-redux": "^5.0.5"
+    "react-redux": "^5.0.5",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
