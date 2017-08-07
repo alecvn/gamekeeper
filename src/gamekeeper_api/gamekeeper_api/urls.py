@@ -39,7 +39,7 @@ from django.contrib import admin
 # Additionally, we include login URLs for the browsable API.
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    #url(r'^', include(router.urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^gamekeeper/', include('gamekeeper.urls')),
 #    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
