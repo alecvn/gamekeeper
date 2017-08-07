@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'webpack_loader',
+    #'webpack_loader',
     'gamekeeper'
 ]
 
@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'gamekeeper_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.',
         'NAME': 'gamekeeper',
-        'USER': 'alec',
-        'PASSWORD': 'alec'
+        'USER': '',
+        'PASSWORD': ''
     }
 }
 
@@ -123,6 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_HOME, '..', '..', 'static_collected')
 
 STATICFILES_DIRS = (
     #This lets Django's collectstatic store our bundles
@@ -144,3 +145,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+if os.path.exists(os.path.join(PROJECT_HOME,"local_settings.py")):
+    from local_settings import *
