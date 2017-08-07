@@ -19,7 +19,6 @@ fi
 cd ${ROOT}
 
 sudo chown -R www-data:$(whoami) logs
-sudo chown www-data:$(whoami) logs/*_management.log
 
 sudo chmod ug+w -R logs
 sudo chmod ug+w -R media
