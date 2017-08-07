@@ -2,25 +2,25 @@
 
 
 {% block content %}
-<h1>Players</h1>
+    <h1>Players</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'create_player' %}" method="post">
-  {% csrf_token %}
-  <div>
-    {{ player_form }}
-    
-  </div>
-  <input type="submit" value="Submit" />
-  
-</form>
+    <form action="{% url 'create_player' %}" method="post">
+        {% csrf_token %}
+        <div>
+            {{ player_form }}
+            
+        </div>
+        <input type="submit" value="Submit" />
+        
+    </form>
 
-<div>
-  {% for player in players %}
-    <div>{{ player.full_name }}</div>
-    <div>{{ player.rules_triggered }}</div>
-    <!-- <div>{{ player.actions_triggered }}</div> -->
-  {% endfor %}
-</div>
+    <div>
+        {% for player in players %}
+            <div>{{ player.id }} {{ player.full_name }}</div>
+            <div>{{ player.rules_triggered }}</div>
+            <!-- <div>{{ player.actions_triggered }}</div> -->
+        {% endfor %}
+    </div>
 {% endblock %}

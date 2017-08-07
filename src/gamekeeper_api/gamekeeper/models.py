@@ -148,7 +148,7 @@ class Trigger(models.Model):
     def __unicode__(self):
         return "{0}".format(self.action.description)
 
-    
+
 class Game(models.Model):
     name = models.CharField(max_length=128)
     actions = models.ManyToManyField(Action, blank=True)

@@ -97,24 +97,34 @@ def create_event(request, game_id):
         for rule in event_to_clone.rules.all():
             new_event.rules.add(rule)
         for child_event in event_to_clone.child_events.all():
-            new_event.child_events.add(Event.objects.create(name=child_event.name, game=event_to_clone.game, start_datetime=event_to_clone.start_datetime, end_datetime=event_to_clone.end_datetime))
+            new_child_event = Event.objects.create(name=child_event.name, game=event_to_clone.game, start_datetime=event_to_clone.start_datetime, end_datetime=event_to_clone.end_datetime)
+            new_event.child_events.add(new_child_event)
+            for action in child_event.actions.all():
+                new_child_event.actions.add(action)
         return HttpResponseRedirect(reverse('list_events', kwargs={'game_id': game_id}))
         
 
 def update_event(request, game_id, event_id):
-    result_params = request.POST['result']
+    player_to_add_id = request.POST['player_to_add_id']
 
-    action_id, player_id = result_params.split(",")
-    action = Action.objects.get(pk=action_id)
-    player = Player.objects.get(pk=player_id)
+    if not player_to_add_id:
+        result_params = request.POST['result']
 
-    description = request.POST['description%s' % player_id]
+        action_id, player_id = result_params.split(",")
+        action = Action.objects.get(pk=action_id)
+        player = Player.objects.get(pk=player_id)
 
-    event = Event.objects.get(pk=event_id)
-    if description:
-        ActionResult.objects.create(event=event, player=player, action=action, description=description)
+        description = request.POST['description%s' % player_id]
+
+        event = Event.objects.get(pk=event_id)
+        if description:
+            ActionResult.objects.create(event=event, player=player, action=action, description=description)
+        else:
+            ActionResult.objects.create(event=event, player=player, action=action)
     else:
-        ActionResult.objects.create(event=event, player=player, action=action)
+        player_to_add = Player.objects.get(pk=player_to_add_id)
+        event = Event.objects.get(pk=event_id)
+        event.players.add(player_to_add)
 
     return HttpResponseRedirect(reverse('show_event', kwargs={'game_id': game_id, 'event_id': event_id}))
 

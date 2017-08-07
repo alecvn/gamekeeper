@@ -10,19 +10,20 @@
 
 <form action="{% url 'update_event' game_id event_id %}" method="post">
     {% csrf_token %}
-    
+    <input name="player_to_add_id"/>
     <ul>
 	{% for player in event.players_list %}
 	<li>
 	    {{ player }}
 	    <input name="description{{ player.id }}"/>
 	    {% for action in event.action_list %}
-	    <button type="submit" name="result" value="{{ action.id }},{{ player.id }}">{{ action }}</button>
+	        <button type="submit" name="result" value="{{ action.id }},{{ player.id }}">{{ action }}</button>
 	    {% endfor %}
 	</li>
 	{% endfor %}
 	Results: {{ results }}
 	Rules: {{ rules }}
+        Actions: {{ event.action_list }}
     </ul>
     
 </form>
