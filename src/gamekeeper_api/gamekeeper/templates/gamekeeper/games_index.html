@@ -1,0 +1,26 @@
+{% extends 'gamekeeper/base.html' %}
+
+
+{% block content %}
+<h1>Games</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'create_game' %}" method="post">
+  {% csrf_token %}
+  <div>
+    {{ game_form }}
+    
+  </div>
+  <input type="submit" value="Submit" />
+  
+</form>
+
+<div>
+  {% for game in games %}
+  <div>
+    <a href="{% url 'list_events' game.id %}">{{ game.name }}</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

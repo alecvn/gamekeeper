@@ -1,26 +1,10 @@
 {% load render_bundle from webpack_loader %}
+<header>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+</header>
 
-
-<h1>Games</h1>
-<div id="container">
-    {% render_bundle 'main' %}
-</div>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<form action="{% url 'create_game' %}" method="post">
-  {% csrf_token %}
-  <div>
-    {{ game_form }}
-    
-  </div>
-  <input type="submit" value="Submit" />
-  
-</form>
-
-<div>
-  {% for game in games %}
-  <div>
-    <a href="{% url 'list_events' game.id %}">{{ game.name }}</a>
-  </div>
-  {% endfor %}
-</div>
+<body>
+    <div id="container">
+	{% render_bundle 'main' %}
+    </div>
+</body>
