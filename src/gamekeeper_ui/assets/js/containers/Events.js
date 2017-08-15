@@ -37,8 +37,11 @@ class Events extends React.Component {
 		    <Breadcrumb.Item href="http://getbootstrap.com/components/#breadcrumbs">
 			Matches
 		    </Breadcrumb.Item>
-		    <Breadcrumb.Item active>
+		    <Breadcrumb.Item>
 			Games
+		    </Breadcrumb.Item>
+		    <Breadcrumb.Item active>
+			All
 		    </Breadcrumb.Item>
 		</Breadcrumb>
 		<Nav bsStyle="pills" stacked activeKey={0} onSelect={this.handleSelect}>
@@ -47,10 +50,8 @@ class Events extends React.Component {
 		    )}
 		</Nav>
 	    </div>
-
 	)
     }
-
 }
 
 function mapStateToProps(state, ownProps) {

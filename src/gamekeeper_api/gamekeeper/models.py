@@ -134,8 +134,11 @@ class Player(models.Model):
                 triggered_actions += ActionResult.objects.filter(player=self, event=child_event)
         return triggered_actions
 
-    def total_points(self, event):
-        event = Event.objects.get(pk=event.id)
+    def total_points(self, event=None):
+        if not event:
+            event = Event.objects.filter(parent_id__isnull=True)[0]
+        else:
+            event = Event.objects.get(pk=event.id)
         triggered_rules = Rule.get_deep_triggered_rules_for_player_and_event(self, event)
 
         return sum(map(lambda rule: rule.point.allocation, triggered_rules))

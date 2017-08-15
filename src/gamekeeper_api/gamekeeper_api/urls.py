@@ -42,14 +42,14 @@ class PointViewSet(viewsets.ModelViewSet):
     serializer_class = PointSerializer
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
-    points = PointSerializer(many=True)
+     total_points = serializers.SerializerMethodField('total_points')
 
-    def get_points(self, obj):
-        return obj.total_points
+     def total_points(self, obj):
+         return obj.total_points()
     
-    class Meta:
-        model = Player
-        fields = ('full_name', 'total_points')
+     class Meta:
+         model = Player
+         fields = ('full_name', 'total_points')
         
 
 class PlayerViewSet(viewsets.ModelViewSet):
@@ -57,17 +57,11 @@ class PlayerViewSet(viewsets.ModelViewSet):
     serializer_class = PlayerSerializer
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
-    players_field = serializers.SerializerMethodField('is_named_bar')
-
-    def is_named_bar(self, foo):
-        return foo.name == "bar"# players = PlayerSerializer(many=True)
-
+    players = PlayerSerializer(many=True)
+    
     class Meta:
         model = Event
         fields = ('name', 'players')
-        extra_kwargs = {
-            'players': {'lookup_field': 'points'}
-        }
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()

@@ -46,7 +46,7 @@ class Players extends React.Component {
 			    <tr key={i}>
 				<td>{i+1}</td>
 				<td>{player.full_name}</td>
-				<td></td>
+				<td>{player.total_points}</td>
 			    </tr>
 			)}
 		    </tbody>
