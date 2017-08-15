@@ -140,6 +140,7 @@ class Player(models.Model):
 
         return sum(map(lambda rule: rule.point.allocation, triggered_rules))
 
+# class NPC(Player):
     
 class Trigger(models.Model):
     rule = models.ForeignKey(Rule)

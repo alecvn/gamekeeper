@@ -5,22 +5,16 @@
 <h1>Standings</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<form action="{% url 'evaluate_actions' game_id event_id %}" method="post">
-    {% csrf_token %}
-    <table>
-	<tr>
-	    <th></th>
-	    {% for player in players %}<th>{{ player.full_name }}</th>{% endfor %}
-	</tr>
-	<tr>
-	    <td>
-		Points
-	    </td>
-	    {% for point in points %}<td>{{ point }}</td>{% endfor %}
-	</tr>
-    </table>
-
-    <input type="submit" value="Evaluate">
-</form>
-
+<table>
+  <tr>
+    <th></th>
+    {% for player in players %}<th>{{ player.full_name }}</th>{% endfor %}
+  </tr>
+  <tr>
+    <td>
+      Points
+    </td>
+    {% for point in points %}<td>{{ point }}</td>{% endfor %}
+  </tr>
+</table>
 {% endblock %}

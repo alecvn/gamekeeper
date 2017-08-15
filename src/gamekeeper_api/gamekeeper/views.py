@@ -9,30 +9,15 @@ def list_games(request):
     game_form = GameForm()
     games = Game.objects.all()
 
-    return render(request, "gamekeeper/index.html", {'game_form': game_form, 'games': games})
+    return render(request, "gamekeeper/games_index.html", {'game_form': game_form, 'games': games})
 
 def create_game(request):
     game_form = GameForm(request.POST)
     if game_form.is_valid():
         game_form.save()
         return HttpResponseRedirect(reverse('list_games'))
-    return render(request, 'gamekeeper/index.html', {
+    return render(request, 'gamekeeper/games_index.html', {
         'error_message': game_form.errors
-    })
-
-def list_participants(request):
-    participant_form = PlayerForm()
-    participants = Player.objects.all()
-    
-    return render(request, "gamekeeper/index.html", {'participant_form': participant_form, 'participants': participants})
-
-def create_participant(request):
-    participant_form = PlayerForm(request.POST)
-    if participant_form.is_valid():
-        participant_form.save()
-        return HttpResponseRedirect(reverse('index'))
-    return render(request, 'gamekeeper/index.html', {
-        'error_message': participant_form.errors
     })
 
 def list_rules(request):
@@ -149,37 +134,6 @@ def list_actions(request):
     
     return render(request, "gamekeeper/actions_index.html", {'action_form': action_form, 'parent_actions': parent_actions})
 
-def evaluate_actions(request, game_id, event_id):
-    # eventually filter by event and player here
-    parent_event = Event.objects.get(pk=event_id)
-
-    for event in parent_event.children:
-        rules = event.rules.all()
-        if len(rules) > 0:
-            for rule in rules:
-                action_results = []
-                for child_event in event.children:
-                    for player in child_event.players.all():
-                        peas = ActionResult.objects.filter(event=child_event, player=player)
-                        for pea in peas:
-                            action_results.append(pea)
-
-                if list(rule.triggers.all()) == map(lambda x: x.action, action_results):
-                    action_results[0].player.rules.add(rule)
-    # actions = event.actions.filter(parent_id__isnull=True)
-    # # TODO: fix this hack
-    # if len(actions) == 0:
-    #     event = event.children[0]
-    #     actions = event.actions.all()
-
-    # players = event.players.all()
-
-    # for player in players:
-    #     for action in actions:
-    #         action.evaluate_children(event, player)
-
-    return HttpResponseRedirect(reverse('list_results', kwargs={'game_id': game_id, 'event_id': event_id}))
-
 def create_action(request):
     action_form = ActionForm(request.POST)
     if action_form.is_valid():
@@ -211,3 +165,6 @@ def list_results(request, game_id, event_id):
     points = map(lambda player: player.total_points(event), players)
 
     return render(request, "gamekeeper/results_index.html", {'players': players, 'points': points, 'game_id': game_id, 'event_id': event_id})
+
+def react(request):
+    return render(request, "gamekeeper/index.html")
