@@ -1,6 +1,7 @@
 import React from 'react'
 import Body from '../containers/Body'
 import MainHeader from '../containers/MainHeader'
+import styles from '../../css/main.css'
 
 
 var App = React.createClass({
@@ -18,7 +19,7 @@ var App = React.createClass({
     
     render: function() {
 	return (
-	    <div>
+	    <div className={styles.bg}>
 		<MainHeader />
 		<Body />
 	    </div>

@@ -1,41 +1,71 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Nav, Navbar, NavDropdown, NavItem, MenuItem, Breadcrumb } from 'react-bootstrap'
+import { loadPlayers, fetchEvents } from '../actions'
 
-let Events = ({ dispatch }) => {
-    let input
+class Events extends React.Component {
+    constructor(props) {
+	super(props);
+	this.handleSelect = this.handleSelect.bind(this);
+    }
 
+    componentDidMount() {
+	const { dispatch } = this.props;
+	dispatch(fetchEvents());
+    }
 
-    return (
-	<div>
-	    <Navbar>
-		<Navbar.Header>
-		    <Navbar.Brand>
-			Events
-		    </Navbar.Brand>
-		</Navbar.Header>
-	    </Navbar>
-	    <Breadcrumb>
-		<Breadcrumb.Item href="#">
-		    Home
-		</Breadcrumb.Item>
-		<Breadcrumb.Item href="http://getbootstrap.com/components/#breadcrumbs">
-		    Library
-		</Breadcrumb.Item>
-		<Breadcrumb.Item active>
-		    Data
-		</Breadcrumb.Item>
-	    </Breadcrumb>
-	    <Nav bsStyle="pills" stacked activeKey={1}>
-		<NavItem eventKey={1} href="/home">NavItem 1 content</NavItem>
-		<NavItem eventKey={2} title="Item">NavItem 2 content</NavItem>
-		<NavItem eventKey={3} disabled>NavItem 3 content</NavItem>
-	    </Nav>
-	</div>
+    handleSelect(selectedKey) {
+	const { dispatch } = this.props;
+	console.log(this.props.events.events[selectedKey]['players']);
+	dispatch(loadPlayers(this.props.events.events[selectedKey]['players']));
+    }
 
-    )
+    render() {
+	return (
+	    <div>
+		<Navbar>
+		    <Navbar.Header>
+			<Navbar.Brand>
+			    Events
+			</Navbar.Brand>
+		    </Navbar.Header>
+		</Navbar>
+		<Breadcrumb>
+		    <Breadcrumb.Item href="#">
+			League
+		    </Breadcrumb.Item>
+		    <Breadcrumb.Item href="http://getbootstrap.com/components/#breadcrumbs">
+			Matches
+		    </Breadcrumb.Item>
+		    <Breadcrumb.Item active>
+			Games
+		    </Breadcrumb.Item>
+		</Breadcrumb>
+		<Nav bsStyle="pills" stacked activeKey={0} onSelect={this.handleSelect}>
+		    {this.props.events.events.map((event, i) =>
+			<NavItem eventKey={i} key={i} >{event.name}</NavItem> // className={(i == 0) ? "active" : ""}
+		    )}
+		</Nav>
+	    </div>
+
+	)
+    }
+
 }
-Events = connect()(Events)
 
-export default Events
+function mapStateToProps(state, ownProps) {
+    const {
+	isFetching,
+	events: events
+    } = state || {
+	isFetching: true,
+	events: []
+    }
 
+    return {
+	events,
+	isFetching
+    }
+}
+
+export default connect(mapStateToProps)(Events)

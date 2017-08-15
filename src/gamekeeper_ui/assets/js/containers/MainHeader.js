@@ -1,12 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { PageHeader, Nav, Navbar, NavDropdown, NavItem, MenuItem } from 'react-bootstrap'
+import styles from '../../css/main.css'
 
 let MainHeader = ({ dispatch }) => {
     let input
 
     return (
-	<div>
+	<div className={styles.header}>
 	    <PageHeader>
 		Gamekeeper
 	    </PageHeader>

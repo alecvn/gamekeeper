@@ -1,8 +1,11 @@
 import { combineReducers } from 'redux'
-import todos from './todos'
+import players from './players'
+import events from './events'
 
-const todoApp = combineReducers({
-  todos
+const gamekeeperApp = combineReducers({
+    players,
+    events
+    
 })
 
-export default todoApp
+export default gamekeeperApp

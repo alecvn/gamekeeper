@@ -1,7 +1,10 @@
+import 'babel-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { Provider } from 'react-redux'
+import thunk from 'redux-thunk';
 // import { createLogger } from 'redux-logger'
 import reducer from './reducers'
 import App from './containers/App'
@@ -11,26 +14,20 @@ import App from './containers/App'
 //   middleware.push(createLogger());
 // }
 
-const store = createStore(reducer)
+
+const store = createStore(
+    reducer,
+    composeWithDevTools(
+	applyMiddleware(
+	    thunk
+	)
+    )
+);
 
 render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('container')
+    <Provider store={store}>
+	<App />
+    </Provider>,
+    document.getElementById('container')
 )
 
-// var React = require('react')
-// var ReactDOM = require('react-dom')
-
-// var Hello = React.createClass ({
-//     render: function() {
-//         return (
-//             <h1>
-//             Hello, React!
-//             </h1>
-//         )
-//     }
-// })
-
-// ReactDOM.render(<Hello />, document.getElementById('container'))

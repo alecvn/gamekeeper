@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.conf.urls import url, include
-from gamekeeper.models import Player
+from gamekeeper.models import Player, Event, Point
 from django.contrib.auth.models import User
 from django.contrib import admin
 from rest_framework import routers, serializers, viewsets
@@ -32,21 +32,53 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class PointSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Point
+        fields = ('description', 'allocation',)
+
+class PointViewSet(viewsets.ModelViewSet):
+    queryset = Point.objects.all()
+    serializer_class = PointSerializer
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
+    points = PointSerializer(many=True)
+
+    def get_points(self, obj):
+        return obj.total_points
+    
     class Meta:
         model = Player
-        fields = ('full_name',)
+        fields = ('full_name', 'total_points')
+        
 
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
+
+class EventSerializer(serializers.HyperlinkedModelSerializer):
+    players_field = serializers.SerializerMethodField('is_named_bar')
+
+    def is_named_bar(self, foo):
+        return foo.name == "bar"# players = PlayerSerializer(many=True)
+
+    class Meta:
+        model = Event
+        fields = ('name', 'players')
+        extra_kwargs = {
+            'players': {'lookup_field': 'points'}
+        }
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'players', PlayerViewSet)
+router.register(r'events', EventViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
