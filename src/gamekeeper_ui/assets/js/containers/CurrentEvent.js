@@ -1,47 +1,69 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Checkbox, Radio, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap'
+import styles from '../../css/main.css'
 
-let CurrentEvent = ({ dispatch }) => {
-    let input
 
-    return (
-	<form>
+class CurrentEvent extends React.Component {
+
+    constructor(props) {
+	super(props);
+	this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    componentDidMount() {
+	const { dispatch } = this.props;
+	var dartboard = new Dartboard('#dartboard');
+	dartboard.render();
+	
+    }
+
+    handleSelect(d) {
+	const { dispatch } = this.props;
+	console.log(d);
+    }
+
+    render() {
+	
+	return (
+	    <div>
+	    <div id="dartboard" className={styles.dartboard} onClick={this.handleSelect}></div>
+	    <form>
 	    <FormGroup type="text" placeholder="Enter text" value="hehe">
-		<ControlLabel>label</ControlLabel>
+	    <ControlLabel>label</ControlLabel>
 	    </FormGroup>
 	    <Checkbox checked readOnly>
-		Checkbox
+	    Checkbox
 	    </Checkbox>
 	    <Radio checked readOnly>
-		Radio
+	    Radio
 	    </Radio>
 
 	    <FormGroup>
-		<Checkbox inline>
-		    1
-		</Checkbox>
-		{' '}
-		<Checkbox inline>
-		    2
-		</Checkbox>
-		{' '}
-		<Checkbox inline>
-		    3
-		</Checkbox>
+	    <Checkbox inline>
+	    1
+	    </Checkbox>
+	    {' '}
+	    <Checkbox inline>
+	    2
+	    </Checkbox>
+	    {' '}
+	    <Checkbox inline>
+	    3
+	    </Checkbox>
 	    </FormGroup>
 	    <FormGroup>
-		<Radio name="radioGroup" inline>
-		    1
-		</Radio>
-		{' '}
-		<Radio name="radioGroup" inline>
-		    2
-		</Radio>
-		{' '}
-		<Radio name="radioGroup" inline>
-		    3
-		</Radio>
+	    <Radio name="radioGroup" inline>
+	    1
+	    </Radio>
+	    {' '}
+	    <Radio name="radioGroup" inline>
+	    2
+	    </Radio>
+	    {' '}
+	    <Radio name="radioGroup" inline>
+		3
+	    </Radio>
 	    </FormGroup>
 
 	    <FormGroup controlId="formControlsSelect">
@@ -74,9 +96,14 @@ let CurrentEvent = ({ dispatch }) => {
 	    <Button type="submit">
 		Submit
 	    </Button>
-	</form>
-    )
+	    </form>
+	</div>
+	)
+    }
 }
-CurrentEvent = connect()(CurrentEvent)
 
-export default CurrentEvent
+function mapStateToProps(state, ownProps) {
+    return {}
+}
+
+export default connect(mapStateToProps)(CurrentEvent)

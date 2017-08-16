@@ -13,6 +13,12 @@ div.page-header {
     border-bottom: 0px;
 }
 
+div.dartboard {
+    width: 400px;
+    height: 400px;
+    margin: 0px auto;
+}
+
 /* CSS - Cascading Style Sheet */
 /* Palette color codes */
 /* Palette URL: http://paletton.com/#uid=52n0v1k85oq7tvE82rA7BlB6BiPkqIk2qZm-qIliqZizrwgEka7606V598L5F8D6J8Y8f */
