@@ -91,8 +91,17 @@ def create_event(request, game_id):
 
 def update_event(request, game_id, event_id):
     player_to_add_id = request.POST['player_to_add_id']
+    remove_rule = request.POST['remove_rule']
 
-    if not player_to_add_id:
+    if player_to_add_id:
+        player_to_add = Player.objects.get(pk=player_to_add_id)
+        event = Event.objects.get(pk=event_id)
+        event.players.add(player_to_add)
+    elif remove_rule:
+        rule_to_remove = Rule.objects.get(pk=remove_rule)
+        event = Event.objects.get(pk=event_id)
+        event.rules.remove(rule_to_remove)
+    else:
         result_params = request.POST['result']
 
         action_id, player_id = result_params.split(",")
@@ -106,10 +115,6 @@ def update_event(request, game_id, event_id):
             ActionResult.objects.create(event=event, player=player, action=action, description=description)
         else:
             ActionResult.objects.create(event=event, player=player, action=action)
-    else:
-        player_to_add = Player.objects.get(pk=player_to_add_id)
-        event = Event.objects.get(pk=event_id)
-        event.players.add(player_to_add)
 
     return HttpResponseRedirect(reverse('show_event', kwargs={'game_id': game_id, 'event_id': event_id}))
 
