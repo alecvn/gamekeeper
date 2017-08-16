@@ -14,7 +14,6 @@ andrew,2,alec,0,
 day 2
 ---
 alec,2,glen,1,double-trip-20 alec
-- I'm here now
 andrew,1,tshepo,2,
 keith,2,tshepo,1,4-in-a-row tshepo
 adrian,2,andrew,1,double-trip-20 adrian
@@ -34,12 +33,16 @@ day 4
 tshepo,3,zaheer,0,1-to-4 tshepo
 zaheer,2,andrew,1,
 
+
 day 5
 ---
 glen,3,adrian,0,double-trip-20 adrian
 keith,2,alec,1,
 tshepo,2,alec,0,
+glen,2,zaheer,1,
+keith,3,glen,0,
 
+(I am here now)
 week2
 _____
 
@@ -70,14 +73,24 @@ zaheer,3,adrian,0,
 andrew,3,adrian,0,
 zaheer,1,glen,2,
 andrew,2,glen,1,(471) - glen high score
+adrian,1,glen,2,
 
 week3
 _____
 
 andrew,1,keith,2,
 adrian,0,tshepo,3,
-glen,2,zaheer,1,
 keith,3,glen,0,
 keith,3,alec,0,
 andrew,3,alec,0,
 zaheer,2,alec,1,double-trip-twenty zaheer
+zaheer,1,andrew,2,
+
+day 3
+---
+keith,3,adrian,0,
+tshepo,3,andrew,0,double-trip-twenty tshepo,double-trip-twenty andrew,1-to-4 tshepo,1-to-4 andrew
+glen,2,alec,1,1-to-4 glen
+keith,3,tshepo,0,
+alec,1,tshepo,2,
+alec,2,adrian,1,
