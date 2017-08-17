@@ -11,9 +11,12 @@ import reducer from './reducers'
 import App from './containers/App'
 
 // const middleware = [ thunk ];
-// if (process.env.NODE_ENV !== 'production') {
-//   middleware.push(createLogger());
-// }
+console.log(process.env.NODE_ENV);
+//if (process.env.NODE_ENV !== 'production') {
+//    console.log(process.env);
+    //    console.log("IT'S PRODUCTION");
+    //    middleware.push(createLogger());
+//}
 
 
 const store = createStore(
