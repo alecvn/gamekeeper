@@ -51,7 +51,6 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
          model = Player
          fields = ('full_name', 'total_points')
         
-
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
@@ -64,7 +63,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('name', 'players')
 
 class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().prefetch_related('players__actions').prefetch_related('rules__triggers').prefetch_related('actions')
     serializer_class = EventSerializer
 
 

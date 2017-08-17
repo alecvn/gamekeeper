@@ -160,7 +160,6 @@ class Game(models.Model):
     def __unicode__(self):
         return self.name
 
-    
 class Event(models.Model):
     # events can be a league, series, match or a game
     # start and end datetime can either be realtime or set.  they can either be limits or recorded in other words.

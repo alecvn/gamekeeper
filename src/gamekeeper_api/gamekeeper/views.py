@@ -91,7 +91,7 @@ def create_event(request, game_id):
 
 def update_event(request, game_id, event_id):
     player_to_add_id = request.POST['player_to_add_id']
-    remove_rule = request.POST['remove_rule']
+    remove_rule = request.POST['remove_rule'] if 'remove_rule' in request.POST else False
 
     if player_to_add_id:
         player_to_add = Player.objects.get(pk=player_to_add_id)
