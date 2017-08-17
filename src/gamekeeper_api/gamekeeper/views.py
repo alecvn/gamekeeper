@@ -97,6 +97,8 @@ def update_event(request, game_id, event_id):
         player_to_add = Player.objects.get(pk=player_to_add_id)
         event = Event.objects.get(pk=event_id)
         event.players.add(player_to_add)
+        for child_event in event.children.all():
+            child_event.players.add(player_to_add)
     elif remove_rule:
         rule_to_remove = Rule.objects.get(pk=remove_rule)
         event = Event.objects.get(pk=event_id)
