@@ -56,7 +56,11 @@ class PlayerViewSet(viewsets.ModelViewSet):
     serializer_class = PlayerSerializer
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
-    players = PlayerSerializer(many=True)
+#    players = PlayerSerializer(many=True)
+    players = serializers.SerializerMethodField('players')
+
+    def players(self, obj):
+        return obj.players.map(lambda player: player.total_points(self))
     
     class Meta:
         model = Event
