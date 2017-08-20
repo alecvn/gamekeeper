@@ -52,7 +52,7 @@ export function fetchPlayers() {
 	// In this case, we return a promise to wait for.
 	// This is not required by thunk middleware, but it is convenient for us.
 
-	return fetch("http://gamekeeper.impd.co.za/players/?format=json")
+	return fetch("http://127.0.0.1:8000/players/?format=json")
 	    .then(
 		response => response.json(),
 		// Do not use catch, because that will also catch
@@ -106,7 +106,7 @@ export function fetchEvents() {
 	// In this case, we return a promise to wait for.
 	// This is not required by thunk middleware, but it is convenient for us.
 
-	return fetch("http://gamekeeper.impd.co.za/events/?format=json")
+	return fetch("http://127.0.0.1:8000/events/?format=json")
 	    .then(
 		response => response.json(),
 		// Do not use catch, because that will also catch

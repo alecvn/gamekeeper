@@ -19,7 +19,7 @@ from gamekeeper.models import Player, Event, Point
 from django.contrib.auth.models import User
 from django.contrib import admin
 from rest_framework import routers, serializers, viewsets
-
+from rest_framework.decorators import api_view
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -55,12 +55,15 @@ class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
-class EventSerializer(serializers.HyperlinkedModelSerializer):
-#    players = PlayerSerializer(many=True)
-    players = serializers.SerializerMethodField('players')
+class EventSerializer(serializers.ModelSerializer):
+    players = PlayerSerializer(many=True)
+#    players = serializers.SerializerMethodField('players')
 
-    def players(self, obj):
-        return obj.players.map(lambda player: player.total_points(self))
+    # def players(self, obj):
+    #     players = []
+    #     for player in obj.players:
+    #         players.append({'id': player.id, 'points': player.total_points(obj), 'full_name': player.full_name})
+    #     return players
     
     class Meta:
         model = Event
@@ -84,5 +87,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('gamekeeper.urls')),
     url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

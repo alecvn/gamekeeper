@@ -14,7 +14,6 @@ import App from './containers/App'
 console.log(process.env.NODE_ENV);
 //if (process.env.NODE_ENV !== 'production') {
 //    console.log(process.env);
-    //    console.log("IT'S PRODUCTION");
     //    middleware.push(createLogger());
 //}
 
