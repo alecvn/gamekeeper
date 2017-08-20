@@ -48,14 +48,9 @@ _____
 
 keith,2,andrew,1,1-to-4 keith, 1-to-4 keith
 
-andrew,33/5,tshepo,67/5,winner tshepo
-andrew,195/5,tshepo,93/5,winner andrew
-andrew,108/2,tshepo,68/5,winner andrew
-
+andrew,2,tshepo,1,tshepo,
 andrew,2,alec,1,
-
 andrew,1,zaheer,2,
-
 keith,0,tshepo,3,tshepo bowling-out-for-lowest-score,
 tshepo,3,adrian,0,
 keith,3,glen,0,
@@ -69,7 +64,6 @@ zaheer,3,alec,0,(443) - zaheer high score
 tshepo,2,zaheer,1,
 tshepo,3,alec,0,
 zaheer,3,adrian,0,
-
 andrew,3,adrian,0,
 zaheer,1,glen,2,
 andrew,2,glen,1,(471) - glen high score

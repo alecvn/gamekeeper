@@ -4,17 +4,123 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
+import datetime
+
+
+def get_records():
+    return [
+        {'andrew': [1,2], 'tshepo': [3]},
+        {'andrew':[1,2],'alec':[3]},
+        {'andrew':[3],'zaheer':[1,2]},
+        {'keith':[],'tshepo':[1,2,3] ,'bonus': {'tshepo':'lowest-score'}},
+        {'tshepo':[1,2,3],'adrian':[]},
+        {'keith':[1,2,3],'glen':[]},
+        {'glen':[1,2],'alec':[3]},
+        {'keith':[1,2,3],'adrian':[],'bonus': {'keith': 'highest-score'}},
+        {'tshepo':[1,2,3],'glen':[]},
+        {'alec':[1,2,3],'adrian':[]},
+        {'keith':[1,2,3],'zaheer':[]},
+        {'keith':[1,2,3],'alec':[]},
+        {'zaheer':[1,2,3],'alec':[],'bonus': {'zaheer': 'highest-score'}},
+        {'tshepo':[1,2],'zaheer':[3]},
+        {'tshepo':[1,2,3],'alec':[]},
+        {'zaheer':[1,2,3],'adrian':[]},
+        {'andrew':[1,2,3],'adrian':[]},
+        {'zaheer':[3],'glen':[1,2]},
+        {'andrew':[1,2],'glen':[3],'bonus': {'glen': 'highest-score'}},
+        {'adrian':[3],'glen':[1,2]}
+    ]
 
 def import_scores(apps, schema_editor):
     Event = apps.get_model('gamekeeper', 'Event')
     Player = apps.get_model('gamekeeper', 'Player')
     Action = apps.get_model('gamekeeper', 'Action')
+    ActionResult = apps.get_model('gamekeeper', 'ActionResult')
     Rule = apps.get_model('gamekeeper', 'Rule')
+    league_event = Event.objects.filter(parent_id__isnull=True)[0]
+    base_match = Event.objects.filter(name="Match 22")[0]
+    game_win = Action.objects.filter(description="Game win")[0]
+    game_loss = Action.objects.filter(description="Game loss")[0]
+    base_game = Event.objects.filter(name="Match 22")[0].child_events.all()[0]
+    week_start = datetime.datetime.strptime('14 Aug 2017', '%d %b %Y')
+    week_end = datetime.datetime.strptime('18 Aug 2017', '%d %b %Y')
+    records = get_records()
 
+    idx = 23
 
-    for person in Person.objects.all():
-        person.name = '%s %s' % (person.first_name, person.last_name)
-        person.save()
+    for record in records:
+        try:
+            bonus = record.pop('bonus')
+        except KeyError:
+            bonus = None
+
+        player1, player2 = map(lambda s: s.capitalize(), record)
+        
+        player1 = Player.objects.filter(full_name=player1)[0]
+        player2 = Player.objects.filter(full_name=player2)[0]
+        player1_score, player2_score = record.values()
+        match = Event.objects.create(game=league_event.game,
+                                     parent=league_event,
+                                     name="Match %i" % idx,
+                                     description="week 2",
+                                     start_datetime=week_start,
+                                     end_datetime=week_end)
+        for rule in base_match.rules.all():
+            match.rules.add(rule)
+        match.players.add(player1)
+        match.players.add(player2)
+
+        game1 = Event.objects.create(game=league_event.game,
+                                     parent=match,
+                                     name="Game 1",
+                                     start_datetime=week_start,
+                                     end_datetime=week_end)
+        for action in base_game.actions.all():
+            game1.actions.add(action)
+        game1.players.add(player1)
+        game1.players.add(player2)
+        
+        game2 = Event.objects.create(game=league_event.game,
+                                     parent=match,
+                                     name="Game 2",
+                                     start_datetime=week_start,
+                                     end_datetime=week_end)
+        for action in base_game.actions.all():
+            game2.actions.add(action)
+        game2.players.add(player1)
+        game2.players.add(player2)
+        
+        game3 = Event.objects.create(game=league_event.game,
+                                     parent=match,
+                                     name="Game 3",
+                                     start_datetime=week_start,
+                                     end_datetime=week_end)
+        for action in base_game.actions.all():
+            game3.actions.add(action)
+        game3.players.add(player1)
+        game3.players.add(player2)
+
+        for i in player1_score:
+            game = match.child_events.all().filter(name="Game %i" % i)[0]
+            ActionResult.objects.create(event=game,
+                                        player=player1,
+                                        action=game_win)
+            ActionResult.objects.create(event=game,
+                                        player=player2,
+                                        action=game_loss)
+
+        for i in player2_score:
+            game = match.child_events.all().filter(name="Game %i" % i)[0]
+            ActionResult.objects.create(event=game,
+                                        player=player2,
+                                        action=game_win)
+            ActionResult.objects.create(event=game,
+                                        player=player1,
+                                        action=game_loss)
+            
+        idx+=1
+
+    
 
 
 class Migration(migrations.Migration):
