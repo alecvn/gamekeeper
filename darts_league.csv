@@ -95,6 +95,9 @@ zaheer,3,adrian,0,
 week4
 _____
 
-keith,2,andrew,1,
-adrian,1,andrew,2,
-alec,1,andrew,2,double-trip-twenty alec,double-trip-twenty andrew,(543) - andrew high score,
+{'keith':[1,2],'andrew'[3]},
+{'adrian':[1],'andrew':[2,3]},
+{'alec':[1],'andrew':[2,3]},double-trip-twenty alec,double-trip-twenty andrew,(543) - andrew high score,
+{'keith':[1],'adrian':[2,3]},
+{'alec':[1],'tshepo':[2,3]},
+{'zaheer':[1],'tshepo':[2,3]},
