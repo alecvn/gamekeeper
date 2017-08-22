@@ -12,12 +12,13 @@ class Events extends React.Component {
     componentDidMount() {
 	const { dispatch } = this.props;
 	dispatch(fetchEvents());
+
     }
 
     handleSelect(selectedKey) {
 	const { dispatch } = this.props;
-	console.log(this.props.events.events[selectedKey]['players']);
-	dispatch(loadPlayers(this.props.events.events[selectedKey]['players']));
+	//console.log(this.props.events.events[selectedKey]);
+	dispatch(loadPlayers(this.props.events.events[selectedKey]['players_points']));
     }
 
     render() {
@@ -31,16 +32,16 @@ class Events extends React.Component {
 		    </Navbar.Header>
 		</Navbar>
 		<Breadcrumb>
-		    <Breadcrumb.Item href="#">
+		    <Breadcrumb.Item active>
 			League
 		    </Breadcrumb.Item>
-		    <Breadcrumb.Item href="http://getbootstrap.com/components/#breadcrumbs">
+		    <Breadcrumb.Item>
 			Matches
 		    </Breadcrumb.Item>
 		    <Breadcrumb.Item>
 			Games
 		    </Breadcrumb.Item>
-		    <Breadcrumb.Item active>
+		    <Breadcrumb.Item>
 			All
 		    </Breadcrumb.Item>
 		</Breadcrumb>
@@ -57,10 +58,12 @@ class Events extends React.Component {
 function mapStateToProps(state, ownProps) {
     const {
 	isFetching,
-	events: events
+	events: events,
+	selected_events: selected_events
     } = state || {
 	isFetching: true,
-	events: []
+	events: [],
+	selected_events: []
     }
 
     return {

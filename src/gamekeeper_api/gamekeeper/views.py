@@ -175,3 +175,6 @@ def list_results(request, game_id, event_id):
 
 def react(request):
     return render(request, "gamekeeper/index.html")
+
+
+

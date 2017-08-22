@@ -75,7 +75,8 @@ class Rule(models.Model):
     def get_deep_triggered_rules_for_player_and_event(player, event):
         triggered_rules = []
 
-        for child_event in event.get_all_children():
+        # for child_event in event.get_all_children():
+        for child_event in event.children:
             triggered_rules += Rule.get_triggered_rules_for_player_and_event(player, child_event)
         return triggered_rules
 
@@ -129,7 +130,8 @@ class Player(models.Model):
         triggered_actions = []
         events = Event.objects.filter(parent_id__isnull=True)
         for event in events:
-            child_events = event.get_all_children()
+            # child_events = event.get_all_children()
+            child_events = event.children
             for child_event in child_events:
                 triggered_actions += ActionResult.objects.filter(player=self, event=child_event)
         return triggered_actions
@@ -196,6 +198,18 @@ class Event(models.Model):
         # return children
 
     @property
+    def players_points(self):
+        import operator
+        points = []
+        for player in self.players.all():
+            if self.parent_id is None:
+                points.append({'full_name': player.full_name, 'points': player.total_points(self)})
+            else:
+                triggered_rules = Rule.get_triggered_rules_for_player_and_event(player, self)
+                points.append({'full_name': player.full_name, 'points': sum(map(lambda rule: rule.point.allocation, triggered_rules))})
+        return sorted(points, key=operator.itemgetter('points'), reverse=True)
+
+    @property
     def players_list(self):
         return self.players.all()
 
@@ -222,7 +236,8 @@ class ActionResult(models.Model):
     @staticmethod
     def get_deep_actions_for_event_and_player(event, player):
         actions = []
-        for child_event in event.get_all_children():
+        # for child_event in event.get_all_children():
+        for child_event in event.children:
             actions += ActionResult.actions_for_event_and_player(child_event, player)
         return actions
 
