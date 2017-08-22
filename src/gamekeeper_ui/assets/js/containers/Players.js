@@ -11,7 +11,7 @@ class Players extends React.Component {
 
     componentDidMount() {
 	const { dispatch } = this.props;
-	dispatch(fetchPlayers());
+	// dispatch(fetchPlayers());
     }
 
     render() {
@@ -46,7 +46,7 @@ class Players extends React.Component {
 			    <tr key={i}>
 				<td>{i+1}</td>
 				<td>{player.full_name}</td>
-				<td>{player.total_points}</td>
+				<td>{player.points}</td>
 			    </tr>
 			)}
 		    </tbody>

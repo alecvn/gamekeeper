@@ -17,13 +17,19 @@
 	    {{ player }}
 	    <input name="description{{ player.id }}"/>
 	    {% for action in event.action_list %}
-	        <button type="submit" name="result" value="{{ action.id }},{{ player.id }}">{{ action }}</button>
+	    <button type="submit" name="result" value="{{ action.id }},{{ player.id }}">{{ action }}</button>
 	    {% endfor %}
 	</li>
 	{% endfor %}
-	Results: {{ results }}
-	Rules: {{ rules }}
-        Actions: {{ event.action_list }}
+	
+	Rules:
+	{% for rule in rules %}
+	    <div>{{ rule.description }}<button type="submit" name="remove_rule" value="{{ rule.id }}">Remove</button></div>
+	{% endfor %}
+
+	<br/>
+	<div>Results: {{ results }}</div>
+        <div>Actions: {{ event.action_list }}</div>
     </ul>
     
 </form>
