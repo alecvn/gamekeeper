@@ -91,14 +91,24 @@ def create_event(request, game_id):
 
 def update_event(request, game_id, event_id):
     player_to_add_id = request.POST['player_to_add_id']
+    action_to_add_id = request.POST['action_to_add_id']
+    rule_to_add_id = request.POST['rule_to_add_id']
     remove_rule = request.POST['remove_rule'] if 'remove_rule' in request.POST else False
 
-    if player_to_add_id:
+    if player_to_add_id != "":
         player_to_add = Player.objects.get(pk=player_to_add_id)
         event = Event.objects.get(pk=event_id)
         event.players.add(player_to_add)
         for child_event in event.children.all():
             child_event.players.add(player_to_add)
+    elif action_to_add_id != "":
+        action_to_add = Action.objects.get(pk=action_to_add_id)
+        event = Event.objects.get(pk=event_id)
+        event.actions.add(action_to_add)
+    elif rule_to_add_id != "":
+        rule_to_add = Rule.objects.get(pk=rule_to_add_id)
+        event = Event.objects.get(pk=event_id)
+        event.rules.add(rule_to_add)
     elif remove_rule:
         rule_to_remove = Rule.objects.get(pk=remove_rule)
         event = Event.objects.get(pk=event_id)

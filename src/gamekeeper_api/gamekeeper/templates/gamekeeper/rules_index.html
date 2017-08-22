@@ -7,17 +7,18 @@
 
 <form action="{% url 'create_rule' %}" method="post">
   {% csrf_token %}
-  <div>
-    {{ rule_form }}
+    <div>
+        {{ rule_form }}
+    </div>
+    <input type="submit" value="Submit" />
     
-  </div>
-  <input type="submit" value="Submit" />
-  
 </form>
 
 <div>
-  {% for rule in rules %}
-    <a href="{% url 'show_rule' rule.id %}">{{ rule.description }}</a>
+    {% for rule in rules %}
+        <div>
+            <a href="{% url 'show_rule' rule.id %}">{{ rule.id }} - {{ rule.description }}</a>
+        </div>
   {% endfor %}
 </div>
 {% endblock %}

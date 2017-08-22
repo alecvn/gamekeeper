@@ -2,15 +2,17 @@
 
 
 {% block content %}
-<h1>Event: {{ event.name }}</h1>
+    <h1>Event: {{ event.name }}</h1>
 
-<div>{{ event.description }}</div>
+    <div>{{ event.description }}</div>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'update_event' game_id event_id %}" method="post">
-    {% csrf_token %}
-    <input name="player_to_add_id"/>
+    <form action="{% url 'update_event' game_id event_id %}" method="post">
+        {% csrf_token %}
+        Player id: <input name="player_to_add_id"/>
+        Rule id: <input name="rule_to_add_id"/>
+        Action id: <input name="action_to_add_id"/>
     <ul>
 	{% for player in event.players_list %}
 	<li>

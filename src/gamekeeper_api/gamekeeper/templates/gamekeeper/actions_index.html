@@ -19,7 +19,7 @@
 <div>
     {% for parent_action in parent_actions %}
         <ul>
-            <div>{{ parent_action.description }}</div>
+            <div>{{ parent_action.id }} - {{ parent_action.description }}</div>
             {% for action in parent_action.children %}
                 <li>
                     <div>{{ action.description }}</div>
