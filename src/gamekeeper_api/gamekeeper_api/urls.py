@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 from rest_framework.decorators import api_view
 from rest_framework import routers, serializers, viewsets
-from rest_framework_nested import routers
+#from rest_framework_nested import routers
 
 from gamekeeper.models import Player, Event, Point
 
