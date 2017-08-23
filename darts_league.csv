@@ -101,3 +101,7 @@ _____
 {'keith':[1],'adrian':[2,3]},
 {'alec':[1],'tshepo':[2,3]},
 {'zaheer':[1],'tshepo':[2,3]},
+{'keith':[1],'tshepo':[2,3]},
+{'adrian':[3],'alec':[1,2]},
+{'adrian':[],'tshepo':[1,2,3]},
+{'zaheer':[3],'alec':[1,2]},double-trip-twenty alec,double-trip-twenty alec,
