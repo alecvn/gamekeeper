@@ -28,7 +28,7 @@ class Events extends React.Component {
 
     handleHistory(key) {
 	const { dispatch } = this.props
-	console.log(key)
+	console.log(this.props.events.focussed_events[key])
     }
 
     render() {
@@ -36,6 +36,20 @@ class Events extends React.Component {
 	let top_event = this.props.events.events[0]
 	if (top_event !== undefined) {
 	    top_event_name = top_event.name
+	}
+	let parents = []
+	let root_event = this.props.events.focussed_events[0]
+	if (root_event !== undefined && root_event.parent !== null) {
+	    parents = this.props.events.events.filter(function(event) {return root_event.parent == event.id})
+
+	    let additional = parents.filter(function(event) {return event.parent !== null})
+	    if (additional.length > 0) {
+		let add_parent = this.props.events.events.filter(function(event) {return additional[0].parent == event.id})
+		// console.log(additional[0])
+		parents.unshift(add_parent[0])
+		console.log(add_parent[0])
+	    }
+	    console.log(parents)
 	}
 
 	return (
@@ -48,8 +62,8 @@ class Events extends React.Component {
 		    </Navbar.Header>
 		</Navbar>
 		<Tabs activeKey={0} onSelect={this.handleHistory} id="controlled-tab-example">
-		    {this.props.events.focussed_events.map((event, i) =>
-			<Tab key={i} eventKey={i} title={event.parent}>League</Tab>
+		    {parents.map((event, i) =>
+			<Tab key={i} eventKey={i} title={event.name}>League</Tab>
 		    )}
 		</Tabs>
 		<Nav bsStyle="pills" stacked activeKey={0} onSelect={this.handleSelect}>
