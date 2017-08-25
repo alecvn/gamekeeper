@@ -136,6 +136,12 @@ class Player(models.Model):
                 triggered_actions += ActionResult.objects.filter(player=self, event=child_event)
         return triggered_actions
 
+    def points_for_event(self, event=None):
+        if event.parent_id == None:
+            return self.total_points()
+        triggered_rules = Rule.get_triggered_rules_for_player_and_event(self, event)
+        return sum(map(lambda rule: rule.point.allocation, triggered_rules))
+
     def total_points(self, event=None):
         if not event:
             event = Event.objects.filter(parent_id__isnull=True)[0]
@@ -174,6 +180,7 @@ class Event(models.Model):
     actions = models.ManyToManyField(Action)
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
+    
 
     def __unicode__(self):
         return self.name
@@ -203,10 +210,10 @@ class Event(models.Model):
         points = []
         for player in self.players.all():
             if self.parent_id is None:
-                points.append({'full_name': player.full_name, 'points': player.total_points(self)})
+                points.append({'id': player.id, 'points': player.total_points(self)})
             else:
                 triggered_rules = Rule.get_triggered_rules_for_player_and_event(player, self)
-                points.append({'full_name': player.full_name, 'points': sum(map(lambda rule: rule.point.allocation, triggered_rules))})
+                points.append({'id': player.id, 'points': sum(map(lambda rule: rule.point.allocation, triggered_rules))})
         return sorted(points, key=operator.itemgetter('points'), reverse=True)
 
     @property

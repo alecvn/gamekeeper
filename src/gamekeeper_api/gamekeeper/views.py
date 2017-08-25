@@ -188,3 +188,89 @@ def react(request):
 
 
 
+
+
+from rest_framework import status, serializers, viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+class ActionResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActionResult
+        fields = ('description', 'action', 'event', 'player',)
+
+    def create(self, validated_data):
+        action_result = ActionResult.objects.create(description=validated_data['description'], action=validated_data['action'], player=validated_data['player'], event=validated_data['event'])
+        return action_result
+    
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
+
+@api_view(['GET', 'POST'])
+@permission_classes((permissions.AllowAny,))
+def action_result_list(request):
+    """
+    List all action results, or create a new action result.
+    """
+    if request.method == 'GET':
+        action_results = ActionResult.objects.all()
+        serializer = ActionResultSerializer(action_results, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = ActionResultSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    points = serializers.SerializerMethodField('calculate_points')
+
+    def calculate_points(self, obj):
+        return obj.points_for_event(self.context.get('event'))
+    
+    class Meta:
+        model = Player
+        fields = ('id', 'full_name', 'points',)
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def player_event_context(request, event_id):
+     if request.method == 'GET':
+        event = Event.objects.get(pk=event_id)
+        players = event.players#.filter(pk=player_id)
+        serializer = PlayerSerializer(players, many=True, context={'event': event})
+        return Response(serializer.data)
+
+
+class EventSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        event = Event.objects.create(name=validated_data['name'],
+                                     parent=validated_data['parent'],
+                                     start_datetime=validated_data['start_datetime'],
+                                     end_datetime=validated_data['end_datetime'],
+                                     game=validated_data['game'])
+        for child in validated_data['child_events']:
+            event.child_events.add(child)
+        for player in validated_data['players']:
+            event.players.add(player)
+        for action in validated_data['actions']:
+            event.actions.add(action)
+        for rule in validated_data['rules']:
+            event.rules.add(rule)
+        return event
+
+    class Meta:
+        model = Event
+        fields = ('id', 'name', 'players_points', 'game',
+                  'actions', 'players', 'rules', 'parent',
+                  'child_events','start_datetime','end_datetime')
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all().prefetch_related('players__actions',
+                                                    'rules__triggers',
+                                                    'child_events')
+    serializer_class = EventSerializer

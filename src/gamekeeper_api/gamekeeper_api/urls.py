@@ -22,7 +22,8 @@ from rest_framework.decorators import api_view
 from rest_framework import routers, serializers, viewsets
 #from rest_framework_nested import routers
 
-from gamekeeper.models import Player, Event, Point
+from gamekeeper.models import Player, Event, Point, ActionResult, Rule, Action
+from gamekeeper import views
 
 
 # Serializers define the API representation.
@@ -45,7 +46,7 @@ class PointViewSet(viewsets.ModelViewSet):
     queryset = Point.objects.all()
     serializer_class = PointSerializer
 
-class PlayerSerializer(serializers.HyperlinkedModelSerializer):
+class PlayerSerializer(serializers.ModelSerializer):
      # total_points = serializers.SerializerMethodField('total_points')
 
      # def total_points(self, obj):
@@ -53,35 +54,44 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     
      class Meta:
          model = Player
-         fields = ('full_name', )#'total_points')
+         fields = ('id', 'full_name', )#'total_points')
         
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
-class EventSerializer(serializers.HyperlinkedModelSerializer):
-    #players = PlayerSerializer(many=True)
-    #players = serializers.SerializerMethodField('players')
+class RuleSerializer(serializers.HyperlinkedModelSerializer):
+     class Meta:
+         model = Rule
+         fields = ('id', 'description')
+        
+class RuleViewSet(viewsets.ModelViewSet):
+    queryset = Rule.objects.all()
+    serializer_class = RuleSerializer
 
-    # def players(self, obj):
-    #     players = []
-    #     for player in obj.players:
-    #         players.append({'id': player.id, 'points': player.total_points(obj), 'full_name': player.full_name})
-    #     return players
-    
+class ActionSerializer(serializers.HyperlinkedModelSerializer):
+     class Meta:
+         model = Action
+         fields = ('id', 'description')
+        
+class ActionViewSet(viewsets.ModelViewSet):
+    queryset = Action.objects.all()
+    serializer_class = ActionSerializer
+
+class ActionResultSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Event
-        fields = ('id', 'name', 'players_points')
+        model = ActionResult
+        fields = ('description', 'event_id', 'action_id', 'player_id',)
 
-class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all().prefetch_related('players__actions', 'rules__triggers', 'child_events')
-    serializer_class = EventSerializer
+class ActionResultViewSet(viewsets.ModelViewSet):
+    queryset = ActionResult.objects.all()
+    serializer_class = ActionResultSerializer
 
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 #router = routers.SimpleRouter()
-router.register(r'events', EventViewSet)
+router.register(r'events', views.EventViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'players', PlayerViewSet)
 
@@ -93,6 +103,9 @@ router.register(r'players', PlayerViewSet)
 
 urlpatterns = [
 #    url(r'^', include(events_router.urls)),
+    # url(r'^events/(?P<event_id>[0-9]+)/players/(?P<player_id>[0-9]+)/details/$', views.player_event_context),
+    url(r'^events/(?P<event_id>[0-9]+)/players/$', views.player_event_context),
+    url(r'^action_results/$', views.action_result_list),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('gamekeeper.urls')),
     url(r'^', include(router.urls)),

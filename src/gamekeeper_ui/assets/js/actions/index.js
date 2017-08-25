@@ -8,6 +8,11 @@ export const FETCH_EVENTS_REQUEST = 'FETCH_EVENTS_REQUEST'
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS'
 export const FETCH_EVENTS_FAILURE = 'FETCH_EVENTS_FAILURE'
 
+export const LOAD_EVENTS = 'LOAD_EVENTS'
+
+//BASE_URL = "http://gamekeeper.impd.co.za/"
+const BASE_URL = "http://127.0.0.1:8000/"
+
 
 function requestPlayers() {
     return {
@@ -35,7 +40,7 @@ export function loadPlayers(json) {
     }
 }
 
-export function fetchPlayers() {
+export function fetchPlayers(event_id) {
     // Thunk middleware knows how to handle functions.
     // It passes the dispatch method as an argument to the function,
     // thus making it able to dispatch actions itself.
@@ -50,9 +55,9 @@ export function fetchPlayers() {
 	// that is passed on as the return value of the dispatch method.
 
 	// In this case, we return a promise to wait for.
-	// This is not required by thunk middleware, but it is convenient for us.
-
-	return fetch("http://gamekeeper.impd.co.za/players/?format=json")
+	// This is not required by thunk middleware, but it is convenient for us
+	// return fetch(BASE_URL + "events/" + String(event_id) + "/players/" + String(player_id) + "?format=json")
+	return fetch(BASE_URL + "events/" + String(event_id) + "/players/?format=json")
 	    .then(
 		response => response.json(),
 		// Do not use catch, because that will also catch
@@ -89,6 +94,21 @@ function fetchEventsSucceeded(json) {
     }
 }
 
+export function loadEvents(child_events) {
+    return {
+	type: 'LOAD_EVENTS',
+	events: child_events //.children.map(child => child.data)
+    }
+}
+
+function fetchEventsSuccess(json) {
+    return function (dispatch) {
+	dispatch(fetchEventsSucceeded(json))
+	dispatch(fetchPlayers(json[0].id))
+    }
+}
+
+
 export function fetchEvents() {
     // Thunk middleware knows how to handle functions.
     // It passes the dispatch method as an argument to the function,
@@ -106,7 +126,7 @@ export function fetchEvents() {
 	// In this case, we return a promise to wait for.
 	// This is not required by thunk middleware, but it is convenient for us.
 
-	return fetch("http://gamekeeper.impd.co.za/events/?format=json")
+	return fetch(BASE_URL + "events/?format=json")
 	    .then(
 		response => response.json(),
 		// Do not use catch, because that will also catch
@@ -118,8 +138,11 @@ export function fetchEvents() {
 	    .then(json =>
 		// We can dispatch many times!
 		// Here, we update the app state with the results of the API call.
-
-		    dispatch(fetchEventsSucceeded(json))
+		    dispatch(fetchEventsSuccess(json))
 	    )
     }
 }
+/* fetch("/login", {
+ *     method: "POST",
+ *     body: form  //just pass the instance
+ * })*/

@@ -74,6 +74,7 @@ class Players extends React.Component {
  * export default Players
  * */
 function mapStateToProps(state, ownProps) {
+    // http://127.0.0.1:8000/events/7/players/3/details/
     const {
 	isFetching,
 	players: players
