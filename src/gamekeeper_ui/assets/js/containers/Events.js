@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Nav, Navbar, NavDropdown, NavItem, MenuItem, Breadcrumb, Tabs, Tab } from 'react-bootstrap'
-import { loadPlayers, fetchEvents, fetchPlayers, loadEvents } from '../actions'
+import { loadPlayers, fetchEvents, fetchPlayers, loadEvents, addToEventsTab, removeFromEventsTab } from '../actions'
 
 class Events extends React.Component {
     constructor(props) {
@@ -23,35 +23,22 @@ class Events extends React.Component {
 	let children = this.props.events.focussed_events[selectedKey].child_events
 	if (children.length > 0) {
 	    dispatch(loadEvents(children))
+	    dispatch(addToEventsTab(selectedKey, this.props.events.focussed_events[selectedKey].id))
+	} else {
+	    
 	}
     }
 
     handleHistory(key) {
 	const { dispatch } = this.props
-	console.log(this.props.events.focussed_events[key])
+	let children = this.props.events.tabbed_events[key].child_events
+	if (children.length > 0) {
+	    dispatch(loadEvents(children))
+	    //dispatch(removeFromEventsTab(this.props.events.tabbed_events[key].id))
+	}
     }
 
     render() {
-	let top_event_name = "None"
-	let top_event = this.props.events.events[0]
-	if (top_event !== undefined) {
-	    top_event_name = top_event.name
-	}
-	let parents = []
-	let root_event = this.props.events.focussed_events[0]
-	if (root_event !== undefined && root_event.parent !== null) {
-	    parents = this.props.events.events.filter(function(event) {return root_event.parent == event.id})
-
-	    let additional = parents.filter(function(event) {return event.parent !== null})
-	    if (additional.length > 0) {
-		let add_parent = this.props.events.events.filter(function(event) {return additional[0].parent == event.id})
-		// console.log(additional[0])
-		parents.unshift(add_parent[0])
-		console.log(add_parent[0])
-	    }
-	    console.log(parents)
-	}
-
 	return (
 	    <div>
 		<Navbar>
@@ -61,14 +48,14 @@ class Events extends React.Component {
 			</Navbar.Brand>
 		    </Navbar.Header>
 		</Navbar>
-		<Tabs activeKey={0} onSelect={this.handleHistory} id="controlled-tab-example">
-		    {parents.map((event, i) =>
-			<Tab key={i} eventKey={i} title={event.name}>League</Tab>
+		<Tabs onSelect={this.handleHistory} id="blah">
+		    {this.props.events.tabbed_events.map((event, i) =>
+			<Tab key={i} eventKey={i} title={event.name}></Tab>
 		    )}
 		</Tabs>
-		<Nav bsStyle="pills" stacked activeKey={0} onSelect={this.handleSelect}>
+		<Nav bsStyle="pills" stacked onSelect={this.handleSelect}>
 		    {this.props.events.focussed_events.map((event, i) =>
-			<NavItem eventKey={i} key={i} >{event.name}</NavItem> // className={(i == 0) ? "active" : ""}
+			<NavItem eventKey={i} key={i}>{event.name}</NavItem>
 		    )}
 		</Nav>
 	    </div>
@@ -82,17 +69,17 @@ function mapStateToProps(state, ownProps) {
     const {
 	isFetching,
 	events: events,
-	focussed_events: focussed_events
-    } = state || {
-	isFetching: true,
-	events: [],
-	focussed_events: []
-    }
+	focussed_events: focussed_events,
+	tabbed_events: tabbed_events,
+	active_tab_idx
+    } = state
 
     return {
 	isFetching,
 	events,
-	focussed_events
+	focussed_events,
+	tabbed_events,
+	active_tab_idx
     }
 }
 

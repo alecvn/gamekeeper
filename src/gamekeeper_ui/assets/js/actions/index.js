@@ -7,6 +7,8 @@ export const FETCH_PLAYERS_FAILURE = 'FETCH_PLAYERS_FAILURE'
 export const FETCH_EVENTS_REQUEST = 'FETCH_EVENTS_REQUEST'
 export const FETCH_EVENTS_SUCCESS = 'FETCH_EVENTS_SUCCESS'
 export const FETCH_EVENTS_FAILURE = 'FETCH_EVENTS_FAILURE'
+export const ADD_TO_EVENTS_TAB = 'ADD_TO_EVENTS_TAB'
+
 
 export const LOAD_EVENTS = 'LOAD_EVENTS'
 
@@ -108,6 +110,13 @@ function fetchEventsSuccess(json) {
     }
 }
 
+export function addToEventsTab(idx, event_id) {
+    return {
+	type: 'ADD_TO_EVENTS_TAB',
+	event_id: event_id,
+	idx: idx
+    }
+}
 
 export function fetchEvents() {
     // Thunk middleware knows how to handle functions.
