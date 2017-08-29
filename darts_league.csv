@@ -105,3 +105,16 @@ _____
 {'adrian':[3],'alec':[1,2]},
 {'adrian':[],'tshepo':[1,2,3]},
 {'zaheer':[3],'alec':[1,2]},double-trip-twenty alec,double-trip-twenty alec,
+{'keith':[1,2],'alec':[3]},
+{'zaheer':[1,2,3],'adrian':[]},
+{'keith':[1,2,3],'zaheer':[]},keith bowled out zaheer for lowest (28),
+{'tshepo':[1,2],'andrew':[3]},tshepo 3x trip twenty,
+{'tshepo':[1,2],'glen':[3]},
+{'alec':[1,2,3],'glen':[]},
+
+
+week5
+_____
+
+{'alec':[2],'tshepo':[1,3]},
+{'alec':[1,2,3],'andrew':[]},
