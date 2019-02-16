@@ -3,7 +3,8 @@ import {
     FETCH_EVENTS_SUCCESS,
     FETCH_EVENTS_FAILURE,
     LOAD_EVENTS,
-    ADD_TO_EVENTS_TAB
+    ADD_TO_EVENTS_TAB,
+    REMOVE_FROM_EVENTS_TAB
 } from '../actions'
 
 function events(
@@ -34,6 +35,11 @@ function events(
 	    return Object.assign({}, state, {
 		active_tab_idx: action.idx,
 		tabbed_events: state.tabbed_events.concat(state.events.filter(function(event) {return action.event_id == event.id})),
+	    })
+	case REMOVE_FROM_EVENTS_TAB:
+	    console.log(state.tabbed_events.splice(action.idx, 1))
+	    return Object.assign({}, state, {
+		tabbed_events: state.tabbed_events
 	    })
 	case FETCH_EVENTS_FAILURE:
 	    return Object.assign({}, state, {

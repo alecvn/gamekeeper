@@ -3,6 +3,13 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from enumfields import EnumField
+from enumfields import Enum  # Uses Ethan Furman's "enum34" backport
+
+class State(Enum):
+    NPC = 'npc'
+    ACTIVE = 'active'
+    INACTIVE = 'inactive'
 
 def comp(list1, list2):
     copy_list1 = list(list1)
@@ -113,6 +120,7 @@ class Player(models.Model):
     points = models.ManyToManyField(Point, blank=True)
     actions = models.ManyToManyField(Action, blank=True)
     rules = models.ManyToManyField(Rule, blank=True)
+    state = EnumField(State, max_length=128)
 
     def __unicode__(self):
         return self.full_name
@@ -224,6 +232,18 @@ class Event(models.Model):
     def action_list(self):
         return self.actions.all()
 
+    @staticmethod
+    def clone(name):
+        event_to_clone = Event.objects.filter(parent_id__isnull=True)[0].children[0]
+        new_event = Event.objects.create(name=name, parent=event_to_clone.parent, game=event_to_clone.game, start_datetime=event_to_clone.start_datetime, end_datetime=event_to_clone.end_datetime)
+        for rule in event_to_clone.rules.all():
+            new_event.rules.add(rule)
+        for child_event in event_to_clone.child_events.all():
+            new_child_event = Event.objects.create(name=child_event.name, game=event_to_clone.game, start_datetime=event_to_clone.start_datetime, end_datetime=event_to_clone.end_datetime)
+            new_event.child_events.add(new_child_event)
+            for action in child_event.actions.all():
+                new_child_event.actions.add(action)
+        return new_event
 
 class ActionResult(models.Model):
     event = models.ForeignKey(Event, related_name="action_results")

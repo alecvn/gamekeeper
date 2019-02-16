@@ -224,6 +224,16 @@ def action_result_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def clone_event(request):
+    """
+    Clone event
+    """
+    if request.method == 'POST':
+        event = Event.clone(request.data['name'])
+        serializer = EventSerializer(event)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class PlayerSerializer(serializers.ModelSerializer):
     points = serializers.SerializerMethodField('calculate_points')

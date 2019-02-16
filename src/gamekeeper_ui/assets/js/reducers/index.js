@@ -5,7 +5,6 @@ import events from './events'
 const gamekeeperApp = combineReducers({
     players,
     events
-    
 })
 
 export default gamekeeperApp

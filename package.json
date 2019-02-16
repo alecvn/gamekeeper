@@ -1,6 +1,8 @@
 {
-    "name": "league_app",
-    "engines" : { "node" : ">=8.2.1" },
+  "name": "league_app",
+  "engines": {
+    "node": ">=8.2.1"
+  },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -23,6 +25,7 @@
     "isomorphic-fetch": "^2.2.1",
     "react-bootstrap": "^0.31.2",
     "react-redux": "^5.0.5",
+    "react-redux-form": "^1.14.1",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",

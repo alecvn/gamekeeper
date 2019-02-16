@@ -9,14 +9,13 @@ import thunk from 'redux-thunk';
 // import { createLogger } from 'redux-logger'
 import reducer from './reducers'
 import App from './containers/App'
+import { combineForms } from 'react-redux-form'
 
 // const middleware = [ thunk ];
-console.log(process.env.NODE_ENV);
 //if (process.env.NODE_ENV !== 'production') {
 //    console.log(process.env);
     //    middleware.push(createLogger());
 //}
-
 
 const store = createStore(
     reducer,

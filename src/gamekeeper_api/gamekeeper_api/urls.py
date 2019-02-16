@@ -106,6 +106,7 @@ urlpatterns = [
     # url(r'^events/(?P<event_id>[0-9]+)/players/(?P<player_id>[0-9]+)/details/$', views.player_event_context),
     url(r'^events/(?P<event_id>[0-9]+)/players/$', views.player_event_context),
     url(r'^action_results/$', views.action_result_list),
+    url(r'^clone_event/$', views.clone_event),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('gamekeeper.urls')),
     url(r'^', include(router.urls)),

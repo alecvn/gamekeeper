@@ -1,13 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Nav, Navbar, NavDropdown, NavItem, MenuItem, Breadcrumb, Tabs, Tab } from 'react-bootstrap'
+import { Nav, Navbar, NavDropdown, NavItem, MenuItem, Breadcrumb, Tabs, Tab, Form, FormGroup, FormControl, Button } from 'react-bootstrap'
 import { loadPlayers, fetchEvents, fetchPlayers, loadEvents, addToEventsTab, removeFromEventsTab } from '../actions'
+import { Control, LocalForm } from 'react-redux-form';
+
 
 class Events extends React.Component {
     constructor(props) {
 	super(props);
 	this.handleSelect = this.handleSelect.bind(this)
 	this.handleHistory = this.handleHistory.bind(this)
+	this.handleSubmit = this.handleSubmit.bind(this)
     }
 
     componentDidMount() {
@@ -17,12 +20,14 @@ class Events extends React.Component {
 
     handleSelect(selectedKey) {
 	const { dispatch } = this.props
-	//console.log(this.props.events.events[selectedKey])
-	// dispatch(loadPlayers(this.props.events.events[selectedKey]['players_points']))
+
 	dispatch(fetchPlayers(this.props.events.focussed_events[selectedKey].id))
 	let children = this.props.events.focussed_events[selectedKey].child_events
-	if (children.length > 0) {
+	if (children.length > 0 && !this.props.events.tabbed_events.map(function(event) {return event.id}).includes(this.props.events.focussed_events[selectedKey].id)) {
 	    dispatch(loadEvents(children))
+	    if (this.props.events.tabbed_events.length == 2) {
+		dispatch(removeFromEventsTab(1, this.props.events.tabbed_events[1].id))
+	    }
 	    dispatch(addToEventsTab(selectedKey, this.props.events.focussed_events[selectedKey].id))
 	} else {
 	    
@@ -34,8 +39,12 @@ class Events extends React.Component {
 	let children = this.props.events.tabbed_events[key].child_events
 	if (children.length > 0) {
 	    dispatch(loadEvents(children))
-	    //dispatch(removeFromEventsTab(this.props.events.tabbed_events[key].id))
 	}
+    }
+
+    handleSubmit(val) {
+	// dispatch action to create a new week
+	console.log(val)
     }
 
     render() {
@@ -46,15 +55,30 @@ class Events extends React.Component {
 			<Navbar.Brand>
 			    Events
 			</Navbar.Brand>
+			<Navbar.Toggle />
 		    </Navbar.Header>
+		    <Navbar.Collapse>
+			<Navbar.Form pullLeft>
+			    <LocalForm onSubmit={(val) => {this.handleSubmit(val)}}>
+				<FormGroup>
+				    {/* <FormControl type="text" name="name" placeholder="Week" onChange={this.handleCityChange} />
+				      */}
+				    <Control.text model=".name" />
+				</FormGroup>
+				{' '}
+				<Button type="submit">Create</Button>
+			    </LocalForm>
+			</Navbar.Form>
+		    </Navbar.Collapse>
 		</Navbar>
 		<Tabs onSelect={this.handleHistory} id="blah">
+		    <Tab key={"thisweek"} eventKey={"thisweek"} title="This week"></Tab>
 		    {this.props.events.tabbed_events.map((event, i) =>
 			<Tab key={i} eventKey={i} title={event.name}></Tab>
 		    )}
 		</Tabs>
 		<Nav bsStyle="pills" stacked onSelect={this.handleSelect}>
-		    {this.props.events.focussed_events.map((event, i) =>
+		    {this.props.events.focussed_events.reverse().map((event, i) =>
 			<NavItem eventKey={i} key={i}>{event.name}</NavItem>
 		    )}
 		</Nav>
